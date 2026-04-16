@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+
+<html lang="fr" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS · AI Interface</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Syne', 'sans-serif'],
+        mono: ['DM Mono', 'monospace'],
+      },
+      colors: {
+        surface: '#0a0a0f',
+        panel: '#0f0f17',
+        card: '#14141f',
+        border: '#1e1e2e',
+        accent: '#6366f1',
+        'accent-glow': '#818cf8',
+        muted: '#3f3f5a',
+        subtle: '#6b6b8a',
+        text: '#e2e2f0',
+        dim: '#a0a0c0',
+      }
+    }
+  }
+}
+</script>
+<style>
+  * { box-sizing: border-box; }
+  body { background: #0a0a0f; font-family: 'Syne', sans-serif; color: #e2e2f0; overflow: hidden; height: 100dvh; }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #2a2a3e; border-radius: 4px; }
+
+.glass {
+background: rgba(20, 20, 31, 0.8);
+backdrop-filter: blur(20px);
+-webkit-backdrop-filter: blur(20px);
+}
+
+.glow-ring {
+box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.3), 0 0 20px rgba(99, 102, 241, 0.08);
+}
+
+.glow-ring:focus-within {
+box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.6), 0 0 30px rgba(99, 102, 241, 0.15);
+}
+
+.btn-primary {
+background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+transition: all 0.2s;
+}
+.btn-primary:hover {
+box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+transform: translateY(-1px);
+}
+.btn-primary:active { transform: translateY(0); }
+
+.sidebar-item {
+transition: all 0.15s;
+border: 1px solid transparent;
+}
+.sidebar-item:hover { background: #14141f; border-color: #1e1e2e; }
+.sidebar-item.active { background: #14141f; border-color: #6366f1; }
+
+.message-user {
+background: linear-gradient(135deg, rgba(99,102,241,0.15) 0%, rgba(139,92,246,0.1) 100%);
+border: 1px solid rgba(99,102,241,0.25);
+border-radius: 18px 18px 4px 18px;
+}
+
+.message-ai {
+background: #14141f;
+border: 1px solid #1e1e2e;
+border-radius: 18px 18px 18px 4px;
+}
+
+.message-ai pre {
+background: #0a0a0f;
+border: 1px solid #1e1e2e;
+border-radius: 10px;
+padding: 1rem;
+overflow-x: auto;
+font-family: ‘DM Mono’, monospace;
+font-size: 0.8rem;
+margin: 0.75rem 0;
+position: relative;
+}
+
+.message-ai code:not(pre code) {
+background: rgba(99,102,241,0.15);
+border: 1px solid rgba(99,102,241,0.25);
+border-radius: 4px;
+padding: 1px 6px;
+font-family: ‘DM Mono’, monospace;
+font-size: 0.85em;
+color: #a5b4fc;
+}
+
+.message-ai p { margin-bottom: 0.6rem; line-height: 1.7; }
+.message-ai h1, .message-ai h2, .message-ai h3 { font-weight: 700; margin: 1rem 0 0.4rem; color: #f0f0ff; }
+.message-ai ul, .message-ai ol { padding-left: 1.5rem; margin-bottom: 0.6rem; }
+.message-ai li { margin-bottom: 0.2rem; line-height: 1.7; }
+.message-ai strong { color: #f0f0ff; font-weight: 600; }
+.message-ai a { color: #818cf8; text-decoration: underline; }
+
+.cursor-blink::after {
+content: ‘▊’;
+animation: blink 0.7s step-start infinite;
+color: #6366f1;
+font-size: 0.9em;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+.slide-in { animation: slideIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
+@keyframes slideIn {
+from { opacity: 0; transform: translateY(12px) scale(0.98); }
+to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.fade-in { animation: fadeIn 0.2s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.sidebar-overlay {
+display: none;
+position: fixed; inset: 0;
+background: rgba(0,0,0,0.6);
+z-index: 30;
+}
+.sidebar-overlay.active { display: block; }
+
+@media (max-width: 768px) {
+#sidebar {
+position: fixed;
+left: -280px;
+top: 0; bottom: 0;
+z-index: 40;
+transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+#sidebar.open { left: 0; }
+}
+
+textarea { resize: none; }
+textarea:focus { outline: none; }
+
+.range-track {
+-webkit-appearance: none;
+appearance: none;
+height: 4px;
+border-radius: 2px;
+background: #1e1e2e;
+outline: none;
+}
+.range-track::-webkit-slider-thumb {
+-webkit-appearance: none;
+width: 14px; height: 14px;
+border-radius: 50%;
+background: #6366f1;
+cursor: pointer;
+box-shadow: 0 0 8px rgba(99,102,241,0.5);
+}
+
+.panel-tabs button { transition: all 0.15s; }
+.panel-tabs button.active {
+color: #e2e2f0;
+border-bottom: 2px solid #6366f1;
+}
+
+.copy-btn {
+opacity: 0;
+transition: opacity 0.2s;
+}
+.message-ai:hover .copy-btn { opacity: 1; }
+
+.noise-bg {
+position: fixed; inset: 0; pointer-events: none; z-index: 0;
+background-image: url(“data:image/svg+xml,%3Csvg viewBox=‘0 0 512 512’ xmlns=‘http://www.w3.org/2000/svg’%3E%3Cfilter id=‘noise’%3E%3CfeTurbulence type=‘fractalNoise’ baseFrequency=‘0.9’ numOctaves=‘4’ stitchTiles=‘stitch’/%3E%3C/filter%3E%3Crect width=‘100%25’ height=‘100%25’ filter=‘url(%23noise)’ opacity=‘0.03’/%3E%3C/svg%3E”);
+}
+
+.ai-agent-badge {
+display: inline-flex;
+align-items: center;
+gap: 4px;
+padding: 2px 8px;
+border-radius: 20px;
+font-size: 0.65rem;
+font-weight: 600;
+letter-spacing: 0.05em;
+text-transform: uppercase;
+font-family: ‘DM Mono’, monospace;
+}
+
+.dot-pulse {
+width: 6px; height: 6px;
+border-radius: 50%;
+background: #6366f1;
+animation: pulse 1.5s infinite;
+}
+@keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.7); } }
+
+/* Settings modal */
+.modal-bg {
+display: none;
+position: fixed; inset: 0;
+background: rgba(0,0,0,0.75);
+backdrop-filter: blur(4px);
+z-index: 100;
+align-items: center;
+justify-content: center;
+}
+.modal-bg.open { display: flex; }
+
+/* Multi-agent turn colors */
+.agent-a { border-color: rgba(99,102,241,0.4); background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(20,20,31,1)); }
+.agent-b { border-color: rgba(236,72,153,0.4); background: linear-gradient(135deg, rgba(236,72,153,0.08), rgba(20,20,31,1)); }
+</style>
+
+</head>
+<body>
+
+<div class="noise-bg"></div>
+
+<!-- SETTINGS MODAL -->
+
+<div class="modal-bg fade-in" id="settingsModal">
+  <div class="glass border border-[#1e1e2e] rounded-2xl w-full max-w-md mx-4 p-6 relative z-10 slide-in">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h2 class="text-lg font-bold text-[#f0f0ff]">Configuration</h2>
+        <p class="text-xs text-[#6b6b8a] mt-0.5">Clés API & préférences</p>
+      </div>
+      <button onclick="closeSettings()" class="w-8 h-8 flex items-center justify-center rounded-lg text-[#6b6b8a] hover:text-[#e2e2f0] hover:bg-[#1e1e2e] transition-all">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+```
+<div class="space-y-4">
+  <div>
+    <label class="text-xs font-600 text-[#a0a0c0] uppercase tracking-widest mb-2 block">Clé API Google Gemini</label>
+    <div class="flex gap-2">
+      <input id="apiKeyInput" type="password" placeholder="AIza..." 
+        class="flex-1 bg-[#0a0a0f] border border-[#1e1e2e] rounded-xl px-4 py-2.5 text-sm font-mono text-[#e2e2f0] focus:border-[#6366f1] outline-none transition-colors"
+      >
+      <button onclick="toggleApiKeyVis()" class="px-3 py-2 bg-[#1e1e2e] rounded-xl text-[#6b6b8a] hover:text-[#e2e2f0] transition-colors" title="Afficher/Masquer">
+        <svg id="eyeIcon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
+    </div>
+    <p class="text-xs text-[#3f3f5a] mt-1.5">Stockée uniquement dans localStorage, jamais envoyée ailleurs.</p>
+  </div>
+
+  <div>
+    <label class="text-xs font-600 text-[#a0a0c0] uppercase tracking-widest mb-2 block">Modèle par défaut</label>
+    <select id="defaultModel" class="w-full bg-[#0a0a0f] border border-[#1e1e2e] rounded-xl px-4 py-2.5 text-sm text-[#e2e2f0] focus:border-[#6366f1] outline-none transition-colors">
+      <option value="gemini-1.5-pro-latest">Gemini 1.5 Pro</option>
+      <option value="gemini-1.5-flash-latest">Gemini 1.5 Flash ⚡</option>
+      <option value="gemini-2.0-flash-exp">Gemini 2.0 Flash (exp)</option>
+    </select>
+  </div>
+</div>
+
+<button onclick="saveSettings()" class="btn-primary w-full mt-6 py-3 rounded-xl text-sm font-700 text-white tracking-wide">
+  Sauvegarder
+</button>
+```
+
+  </div>
+</div>
+
+<!-- LAYOUT WRAPPER -->
+
+<div class="flex h-screen relative z-10">
+
+  <!-- SIDEBAR OVERLAY (mobile) -->
+
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+  <!-- SIDEBAR -->
+
+  <aside id="sidebar" class="w-[260px] flex-shrink-0 bg-[#0f0f17] border-r border-[#1e1e2e] flex flex-col">
+    <!-- Logo -->
+    <div class="p-4 border-b border-[#1e1e2e]">
+      <div class="flex items-center gap-2.5">
+        <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] flex items-center justify-center">
+          <svg width="14" height="14" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        </div>
+        <span class="font-800 text-sm tracking-tight text-[#f0f0ff]">NEXUS</span>
+        <span class="ml-auto text-[10px] font-mono text-[#3f3f5a] border border-[#1e1e2e] rounded-md px-1.5 py-0.5">v2</span>
+      </div>
+    </div>
+
+```
+<!-- New Chat Button -->
+<div class="p-3">
+  <button onclick="newChat()" class="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl border border-dashed border-[#2a2a3e] text-[#6b6b8a] hover:text-[#e2e2f0] hover:border-[#6366f1] hover:bg-[#14141f] transition-all text-sm font-600">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+    Nouveau chat
+  </button>
+</div>
+
+<!-- Conversations list -->
+<div class="flex-1 overflow-y-auto px-3 pb-3 space-y-1" id="convList"></div>
+
+<!-- Bottom actions -->
+<div class="p-3 border-t border-[#1e1e2e] space-y-1">
+  <!-- Multi-Agent Toggle -->
+  <button onclick="toggleMultiAgent()" id="multiAgentBtn" 
+    class="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-[#6b6b8a] hover:bg-[#14141f] text-xs font-600 transition-all">
+    <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><path d="M16 3.13a4 4 0 010 7.75"/><path d="M21 21v-2a4 4 0 00-3-3.87"/></svg>
+    <span id="multiAgentLabel">Mode Multi-Agent</span>
+    <div class="ml-auto w-7 h-4 rounded-full bg-[#1e1e2e] transition-all relative" id="multiAgentToggle">
+      <div class="absolute top-0.5 left-0.5 w-3 h-3 rounded-full bg-[#3f3f5a] transition-all" id="multiAgentDot"></div>
+    </div>
+  </button>
+
+  <button onclick="clearAllChats()" class="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-[#3f3f5a] hover:text-[#e2e2f0] hover:bg-[#14141f] text-xs font-600 transition-all">
+    <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+    Effacer tout
+  </button>
+
+  <button onclick="openSettings()" class="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-[#6b6b8a] hover:text-[#e2e2f0] hover:bg-[#14141f] text-xs font-600 transition-all">
+    <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+    Paramètres & Clé API
+  </button>
+</div>
+```
+
+  </aside>
+
+  <!-- MAIN AREA -->
+
+  <div class="flex-1 flex flex-col min-w-0">
+
+```
+<!-- TOP BAR -->
+<header class="h-14 border-b border-[#1e1e2e] flex items-center px-4 gap-3 glass flex-shrink-0">
+  <!-- Mobile menu button -->
+  <button onclick="toggleSidebar()" class="md:hidden w-8 h-8 flex items-center justify-center rounded-lg text-[#6b6b8a] hover:text-[#e2e2f0] hover:bg-[#1e1e2e] transition-all">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+
+  <!-- Current chat title -->
+  <span class="text-sm font-600 text-[#a0a0c0] flex-1 truncate" id="currentChatTitle">Nouveau chat</span>
+
+  <!-- Model selector -->
+  <div class="flex items-center gap-2">
+    <div class="flex items-center gap-1.5 bg-[#14141f] border border-[#1e1e2e] rounded-xl px-3 py-1.5">
+      <div class="dot-pulse"></div>
+      <select id="modelSelect" class="bg-transparent text-xs font-mono text-[#e2e2f0] outline-none cursor-pointer">
+        <option value="gemini-1.5-pro-latest">1.5 Pro</option>
+        <option value="gemini-1.5-flash-latest">1.5 Flash ⚡</option>
+        <option value="gemini-2.0-flash-exp">2.0 Flash</option>
+      </select>
+    </div>
+
+    <!-- Config panel toggle -->
+    <button onclick="toggleConfigPanel()" id="configToggleBtn"
+      class="w-8 h-8 flex items-center justify-center rounded-lg text-[#6b6b8a] hover:text-[#e2e2f0] hover:bg-[#1e1e2e] transition-all"
+      title="Paramètres avancés">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- CONFIG PANEL (collapsible) -->
+<div id="configPanel" class="hidden border-b border-[#1e1e2e] bg-[#0f0f17] px-4 py-4 fade-in">
+  <div class="max-w-2xl mx-auto grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <!-- System prompt -->
+    <div class="sm:col-span-2">
+      <label class="text-[10px] font-700 text-[#6b6b8a] uppercase tracking-widest mb-2 block">System Instruction</label>
+      <textarea id="systemPrompt" rows="2" placeholder="Ex: Tu es un expert en code Python. Réponds toujours en français..."
+        class="w-full bg-[#0a0a0f] border border-[#1e1e2e] rounded-xl px-3 py-2 text-xs text-[#e2e2f0] font-mono placeholder-[#3f3f5a] focus:border-[#6366f1] transition-colors outline-none leading-relaxed"
+      ></textarea>
+    </div>
+
+    <!-- Temperature -->
+    <div>
+      <div class="flex justify-between mb-2">
+        <label class="text-[10px] font-700 text-[#6b6b8a] uppercase tracking-widest">Température</label>
+        <span class="text-[10px] font-mono text-[#6366f1]" id="tempVal">0.70</span>
+      </div>
+      <input type="range" id="tempSlider" min="0" max="2" step="0.01" value="0.7"
+        class="range-track w-full" oninput="document.getElementById('tempVal').textContent=parseFloat(this.value).toFixed(2)">
+      <div class="flex justify-between text-[10px] text-[#3f3f5a] mt-1 font-mono">
+        <span>Précis</span><span>Créatif</span>
+      </div>
+    </div>
+
+    <!-- Top-P -->
+    <div>
+      <div class="flex justify-between mb-2">
+        <label class="text-[10px] font-700 text-[#6b6b8a] uppercase tracking-widest">Top-P</label>
+        <span class="text-[10px] font-mono text-[#6366f1]" id="topPVal">0.95</span>
+      </div>
+      <input type="range" id="topPSlider" min="0" max="1" step="0.01" value="0.95"
+        class="range-track w-full" oninput="document.getElementById('topPVal').textContent=parseFloat(this.value).toFixed(2)">
+      <div class="flex justify-between text-[10px] text-[#3f3f5a] mt-1 font-mono">
+        <span>Concentré</span><span>Diversifié</span>
+      </div>
+    </div>
+
+    <!-- Multi-agent config (shown when enabled) -->
+    <div id="multiAgentConfig" class="sm:col-span-2 hidden">
+      <div class="border border-dashed border-[#2a2a3e] rounded-xl p-3 space-y-3">
+        <p class="text-[10px] font-700 text-[#6b6b8a] uppercase tracking-widest">Config Multi-Agent</p>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-[10px] text-[#6b6b8a] mb-1.5 block">Agent A (Modèle)</label>
+            <select id="agentAModel" class="w-full bg-[#0a0a0f] border border-[#1e1e2e] rounded-lg px-2 py-1.5 text-xs text-[#e2e2f0] outline-none">
+              <option value="gemini-1.5-pro-latest">1.5 Pro</option>
+              <option value="gemini-1.5-flash-latest">1.5 Flash ⚡</option>
+              <option value="gemini-2.0-flash-exp">2.0 Flash</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-[10px] text-[#6b6b8a] mb-1.5 block">Agent B (Modèle)</label>
+            <select id="agentBModel" class="w-full bg-[#0a0a0f] border border-[#1e1e2e] rounded-lg px-2 py-1.5 text-xs text-[#e2e2f0] outline-none">
+              <option value="gemini-1.5-flash-latest">1.5 Flash ⚡</option>
+              <option value="gemini-1.5-pro-latest">1.5 Pro</option>
+              <option value="gemini-2.0-flash-exp">2.0 Flash</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-[10px] text-[#6b6b8a] mb-1.5 block">Prompt Agent A</label>
+            <input id="agentAPrompt" type="text" placeholder="Tu es un philosophe sceptique..." value="Tu es un philosophe qui remet tout en question."
+              class="w-full bg-[#0a0a0f] border border-[#1e1e2e] rounded-lg px-2 py-1.5 text-xs text-[#e2e2f0] outline-none placeholder-[#3f3f5a] focus:border-[#6366f1] transition-colors">
+          </div>
+          <div>
+            <label class="text-[10px] text-[#6b6b8a] mb-1.5 block">Prompt Agent B</label>
+            <input id="agentBPrompt" type="text" placeholder="Tu es un optimiste convaincu..." value="Tu es un visionnaire optimiste et enthousiaste."
+              class="w-full bg-[#0a0a0f] border border-[#1e1e2e] rounded-lg px-2 py-1.5 text-xs text-[#e2e2f0] outline-none placeholder-[#3f3f5a] focus:border-[#6366f1] transition-colors">
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <label class="text-[10px] text-[#6b6b8a]">Nombre de tours :</label>
+          <input type="number" id="agentTurns" value="4" min="2" max="20"
+            class="w-16 bg-[#0a0a0f] border border-[#1e1e2e] rounded-lg px-2 py-1 text-xs text-[#e2e2f0] outline-none text-center focus:border-[#6366f1] transition-colors">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MESSAGES AREA -->
+<div class="flex-1 overflow-y-auto" id="messagesContainer">
+  <div class="max-w-2xl mx-auto px-4 py-6 space-y-4" id="messages">
+    <!-- Empty state -->
+    <div id="emptyState" class="flex flex-col items-center justify-center py-24 text-center">
+      <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] flex items-center justify-center mb-4 shadow-lg shadow-indigo-500/20">
+        <svg width="24" height="24" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <h2 class="text-xl font-800 text-[#f0f0ff] mb-2">NEXUS · AI Interface</h2>
+      <p class="text-sm text-[#6b6b8a] max-w-xs leading-relaxed">Propulsé par Google Gemini. Configure ta clé API puis commence à discuter.</p>
+      <button onclick="openSettings()" class="mt-6 btn-primary px-5 py-2.5 rounded-xl text-sm font-700 text-white flex items-center gap-2">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        Configurer la clé API
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- INPUT AREA -->
+<div class="flex-shrink-0 p-4 border-t border-[#1e1e2e] glass">
+  <div class="max-w-2xl mx-auto">
+    <!-- Multi-agent start button -->
+    <div id="multiAgentBar" class="hidden mb-3">
+      <button onclick="startMultiAgentChat()" class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-[#6366f1]/20 to-[#ec4899]/20 border border-dashed border-[#6366f1]/40 text-sm font-600 text-[#a5b4fc] hover:from-[#6366f1]/30 hover:to-[#ec4899]/30 transition-all">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><path d="M16 3.13a4 4 0 010 7.75"/><path d="M21 21v-2a4 4 0 00-3-3.87"/></svg>
+        Lancer le débat multi-agent sur ce sujet
+      </button>
+    </div>
+
+    <div class="glow-ring bg-[#14141f] rounded-2xl flex items-end gap-2 p-2">
+      <textarea id="userInput" rows="1" placeholder="Envoie un message…"
+        class="flex-1 bg-transparent px-3 py-2 text-sm text-[#e2e2f0] placeholder-[#3f3f5a] leading-relaxed max-h-40 overflow-y-auto"
+        onkeydown="handleKeyDown(event)" oninput="autoResize(this)"
+      ></textarea>
+      <button onclick="sendMessage()" id="sendBtn"
+        class="btn-primary w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 disabled:opacity-40"
+      >
+        <svg width="15" height="15" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+    <p class="text-center text-[10px] text-[#2a2a3e] mt-2 font-mono">Entrée pour envoyer · Shift+Entrée pour saut de ligne</p>
+  </div>
+</div>
+```
+
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+let conversations = JSON.parse(localStorage.getItem('nexus_convs') || '[]');
+let currentConvId = null;
+let isStreaming = false;
+let multiAgentMode = false;
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+function init() {
+  // Load API key
+  const savedKey = localStorage.getItem('nexus_api_key');
+  if (savedKey) document.getElementById('apiKeyInput').value = savedKey;
+
+  const savedModel = localStorage.getItem('nexus_model') || 'gemini-1.5-pro-latest';
+  document.getElementById('modelSelect').value = savedModel;
+  document.getElementById('defaultModel').value = savedModel;
+
+  renderConvList();
+
+  if (conversations.length > 0) {
+    loadConv(conversations[0].id);
+  }
+}
+
+// ═══════════════════════════════════════════════
+// CONVERSATIONS
+// ═══════════════════════════════════════════════
+function saveConvs() {
+  localStorage.setItem('nexus_convs', JSON.stringify(conversations));
+}
+
+function newChat() {
+  const id = 'conv_' + Date.now();
+  conversations.unshift({ id, title: 'Nouveau chat', messages: [], created: Date.now() });
+  saveConvs();
+  currentConvId = id;
+  renderConvList();
+  renderMessages();
+  closeSidebar();
+}
+
+function loadConv(id) {
+  currentConvId = id;
+  renderConvList();
+  renderMessages();
+  const conv = conversations.find(c => c.id === id);
+  if (conv) {
+    document.getElementById('currentChatTitle').textContent = conv.title;
+  }
+  closeSidebar();
+}
+
+function getCurrentConv() {
+  return conversations.find(c => c.id === currentConvId);
+}
+
+function deleteConv(id, e) {
+  e.stopPropagation();
+  conversations = conversations.filter(c => c.id !== id);
+  saveConvs();
+  if (currentConvId === id) {
+    currentConvId = null;
+    renderMessages();
+  }
+  renderConvList();
+}
+
+function clearAllChats() {
+  if (!confirm('Effacer toutes les conversations ?')) return;
+  conversations = [];
+  currentConvId = null;
+  saveConvs();
+  renderConvList();
+  renderMessages();
+}
+
+function renderConvList() {
+  const el = document.getElementById('convList');
+  if (conversations.length === 0) {
+    el.innerHTML = '<p class="text-[10px] text-[#3f3f5a] text-center py-4 font-mono">Aucune conversation</p>';
+    return;
+  }
+  el.innerHTML = conversations.map(c => `
+    <div onclick="loadConv('${c.id}')" class="sidebar-item ${c.id === currentConvId ? 'active' : ''} rounded-xl px-3 py-2 cursor-pointer group flex items-center gap-2">
+      <svg class="flex-shrink-0 text-[#3f3f5a]" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      <span class="text-xs text-[#a0a0c0] truncate flex-1">${escHtml(c.title)}</span>
+      <button onclick="deleteConv('${c.id}', event)" class="opacity-0 group-hover:opacity-100 text-[#3f3f5a] hover:text-red-400 transition-all flex-shrink-0">
+        <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════════
+// MESSAGES RENDERING
+// ═══════════════════════════════════════════════
+function renderMessages() {
+  const conv = getCurrentConv();
+  const container = document.getElementById('messages');
+  const emptyState = document.getElementById('emptyState');
+
+  if (!conv || conv.messages.length === 0) {
+    container.innerHTML = '';
+    container.appendChild(createEmptyState());
+    document.getElementById('currentChatTitle').textContent = conv ? conv.title : 'Nouveau chat';
+    return;
+  }
+
+  container.innerHTML = conv.messages.map((m, i) => renderMessage(m, i)).join('');
+  Prism.highlightAllUnder(container);
+  scrollToBottom();
+}
+
+function createEmptyState() {
+  const div = document.createElement('div');
+  div.id = 'emptyState';
+  div.innerHTML = `
+    <div class="flex flex-col items-center justify-center py-24 text-center">
+      <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] flex items-center justify-center mb-4 shadow-lg shadow-indigo-500/20">
+        <svg width="24" height="24" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <h2 class="text-xl font-800 text-[#f0f0ff] mb-2">NEXUS · AI Interface</h2>
+      <p class="text-sm text-[#6b6b8a] max-w-xs leading-relaxed">Propulsé par Google Gemini. Configure ta clé API puis commence à discuter.</p>
+      <button onclick="openSettings()" class="mt-6 btn-primary px-5 py-2.5 rounded-xl text-sm font-700 text-white flex items-center gap-2">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        Configurer la clé API
+      </button>
+    </div>
+  `;
+  return div;
+}
+
+function renderMessage(msg, index) {
+  if (msg.role === 'user') {
+    return `
+      <div class="slide-in flex justify-end">
+        <div class="message-user px-4 py-3 max-w-[80%]">
+          <p class="text-sm text-[#e2e2f0] leading-relaxed whitespace-pre-wrap">${escHtml(msg.content)}</p>
+        </div>
+      </div>
+    `;
+  } else {
+    const agentClass = msg.agent === 'B' ? 'agent-b' : (msg.agent === 'A' ? 'agent-a' : '');
+    const agentBadge = msg.agent ? `
+      <span class="ai-agent-badge ${msg.agent === 'A' ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20' : 'bg-pink-500/10 text-pink-400 border border-pink-500/20'}">
+        <span class="w-1.5 h-1.5 rounded-full ${msg.agent === 'A' ? 'bg-indigo-400' : 'bg-pink-400'}"></span>
+        Agent ${msg.agent} · ${escHtml(msg.model || '')}
+      </span>
+    ` : `
+      <span class="ai-agent-badge bg-[#1e1e2e] text-[#6b6b8a]">
+        <div class="w-1.5 h-1.5 rounded-full bg-[#6366f1]"></div>
+        ${escHtml(msg.model || 'Gemini')}
+      </span>
+    `;
+
+    return `
+      <div class="slide-in">
+        <div class="flex items-center gap-2 mb-1.5">
+          ${agentBadge}
+          <button onclick="copyMessage(${index})" class="copy-btn ml-auto flex items-center gap-1 text-[10px] text-[#3f3f5a] hover:text-[#6366f1] transition-colors font-mono px-2 py-1 rounded-lg hover:bg-[#1e1e2e]">
+            <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Copier
+          </button>
+        </div>
+        <div class="message-ai ${agentClass} px-4 py-3 text-sm text-[#c8c8e0]">
+          ${marked.parse(msg.content || '')}
+        </div>
+      </div>
+    `;
+  }
+}
+
+function copyMessage(index) {
+  const conv = getCurrentConv();
+  if (!conv) return;
+  navigator.clipboard.writeText(conv.messages[index].content).then(() => {
+    showToast('Copié !');
+  });
+}
+
+function scrollToBottom() {
+  const c = document.getElementById('messagesContainer');
+  c.scrollTop = c.scrollHeight;
+}
+
+// ═══════════════════════════════════════════════
+// SEND MESSAGE
+// ═══════════════════════════════════════════════
+async function sendMessage() {
+  if (isStreaming) return;
+
+  const input = document.getElementById('userInput');
+  const text = input.value.trim();
+  if (!text) return;
+
+  const apiKey = localStorage.getItem('nexus_api_key');
+  if (!apiKey) {
+    openSettings();
+    showToast('Configure ta clé API d\'abord !', 'error');
+    return;
+  }
+
+  // Create conv if needed
+  if (!currentConvId) {
+    newChat();
+  }
+
+  const conv = getCurrentConv();
+  input.value = '';
+  autoResize(input);
+
+  // Add user message
+  conv.messages.push({ role: 'user', content: text });
+  if (conv.messages.length === 1) {
+    conv.title = text.slice(0, 40) + (text.length > 40 ? '…' : '');
+    document.getElementById('currentChatTitle').textContent = conv.title;
+    renderConvList();
+  }
+
+  renderMessages();
+
+  // Add streaming AI message
+  const model = document.getElementById('modelSelect').value;
+  const aiMsg = { role: 'model', content: '', model: modelLabel(model) };
+  conv.messages.push(aiMsg);
+  saveConvs();
+
+  // Render streaming placeholder
+  addStreamingMessage(aiMsg);
+
+  isStreaming = true;
+  document.getElementById('sendBtn').disabled = true;
+
+  try {
+    await streamGemini(apiKey, model, conv, aiMsg);
+  } catch (err) {
+    aiMsg.content = `**Erreur :** ${err.message}`;
+    renderMessages();
+  }
+
+  isStreaming = false;
+  document.getElementById('sendBtn').disabled = false;
+  saveConvs();
+  renderMessages();
+}
+
+function addStreamingMessage(aiMsg) {
+  const container = document.getElementById('messages');
+
+  // Remove empty state if present
+  const es = container.querySelector('#emptyState');
+  if (es) es.remove();
+
+  const div = document.createElement('div');
+  div.id = 'streaming-msg';
+  div.className = 'slide-in';
+  div.innerHTML = `
+    <div class="flex items-center gap-2 mb-1.5">
+      <span class="ai-agent-badge bg-[#1e1e2e] text-[#6b6b8a]">
+        <div class="dot-pulse"></div>
+        ${escHtml(aiMsg.model || 'Gemini')}
+      </span>
+    </div>
+    <div class="message-ai px-4 py-3 text-sm text-[#c8c8e0]">
+      <span id="streaming-content" class="cursor-blink"></span>
+    </div>
+  `;
+  container.appendChild(div);
+  scrollToBottom();
+}
+
+async function streamGemini(apiKey, model, conv, aiMsg) {
+  const systemPrompt = document.getElementById('systemPrompt').value.trim();
+  const temperature = parseFloat(document.getElementById('tempSlider').value);
+  const topP = parseFloat(document.getElementById('topPSlider').value);
+
+  // Build history (exclude last AI placeholder)
+  const history = conv.messages
+    .slice(0, -1)
+    .map(m => ({
+      role: m.role === 'user' ? 'user' : 'model',
+      parts: [{ text: m.content }]
+    }));
+
+  const body = {
+    contents: history,
+    generationConfig: { temperature, topP, maxOutputTokens: 8192 }
+  };
+
+  if (systemPrompt) {
+    body.systemInstruction = { parts: [{ text: systemPrompt }] };
+  }
+
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?key=${apiKey}&alt=sse`;
+
+  const resp = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+
+  if (!resp.ok) {
+    const err = await resp.json();
+    throw new Error(err.error?.message || `HTTP ${resp.status}`);
+  }
+
+  const reader = resp.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  const streamEl = document.getElementById('streaming-content');
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop();
+
+    for (const line of lines) {
+      if (!line.startsWith('data: ')) continue;
+      const jsonStr = line.slice(6).trim();
+      if (!jsonStr || jsonStr === '[DONE]') continue;
+      try {
+        const chunk = JSON.parse(jsonStr);
+        const text = chunk.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        if (text) {
+          aiMsg.content += text;
+          if (streamEl) {
+            streamEl.innerHTML = marked.parse(aiMsg.content);
+            streamEl.className = 'cursor-blink';
+          }
+          scrollToBottom();
+        }
+      } catch {}
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════
+// MULTI-AGENT
+// ═══════════════════════════════════════════════
+function toggleMultiAgent() {
+  multiAgentMode = !multiAgentMode;
+  const toggle = document.getElementById('multiAgentToggle');
+  const dot = document.getElementById('multiAgentDot');
+  const bar = document.getElementById('multiAgentBar');
+  const config = document.getElementById('multiAgentConfig');
+
+  if (multiAgentMode) {
+    toggle.classList.add('bg-indigo-500/30');
+    toggle.classList.remove('bg-[#1e1e2e]');
+    dot.style.transform = 'translateX(12px)';
+    dot.classList.add('bg-indigo-400');
+    dot.classList.remove('bg-[#3f3f5a]');
+    bar.classList.remove('hidden');
+    config.classList.remove('hidden');
+    if (!document.getElementById('configPanel').classList.contains('hidden')) {
+      // already open
+    } else {
+      toggleConfigPanel();
+    }
+  } else {
+    toggle.classList.remove('bg-indigo-500/30');
+    toggle.classList.add('bg-[#1e1e2e]');
+    dot.style.transform = '';
+    dot.classList.remove('bg-indigo-400');
+    dot.classList.add('bg-[#3f3f5a]');
+    bar.classList.add('hidden');
+    config.classList.add('hidden');
+  }
+}
+
+async function startMultiAgentChat() {
+  const input = document.getElementById('userInput');
+  const topic = input.value.trim() || 'Intelligence artificielle : est-elle une menace ou une opportunité ?';
+
+  const apiKey = localStorage.getItem('nexus_api_key');
+  if (!apiKey) { openSettings(); showToast('Configure ta clé API !', 'error'); return; }
+
+  const modelA = document.getElementById('agentAModel').value;
+  const modelB = document.getElementById('agentBModel').value;
+  const promptA = document.getElementById('agentAPrompt').value;
+  const promptB = document.getElementById('agentBPrompt').value;
+  const turns = parseInt(document.getElementById('agentTurns').value) || 4;
+
+  if (!currentConvId) newChat();
+  const conv = getCurrentConv();
+  input.value = '';
+  autoResize(input);
+
+  conv.title = '🤖 Débat: ' + topic.slice(0, 35) + '…';
+  document.getElementById('currentChatTitle').textContent = conv.title;
+  renderConvList();
+
+  // Seed message
+  conv.messages.push({ role: 'user', content: `**Sujet du débat :** ${topic}` });
+  renderMessages();
+  saveConvs();
+
+  isStreaming = true;
+  document.getElementById('sendBtn').disabled = true;
+
+  let lastContent = topic;
+  let agentAHistory = [];
+  let agentBHistory = [];
+
+  for (let i = 0; i < turns; i++) {
+    const isAgentA = i % 2 === 0;
+    const agentLabel = isAgentA ? 'A' : 'B';
+    const model = isAgentA ? modelA : modelB;
+    const systemP = isAgentA ? promptA : promptB;
+    const history = isAgentA ? agentAHistory : agentBHistory;
+
+    const userMsg = isAgentA
+      ? (i === 0 ? `Donne ton point de vue sur : "${topic}"` : `L'autre agent dit : "${lastContent}". Réponds-lui.`)
+      : `L'agent A dit : "${lastContent}". Réponds-lui en défendant ta position.`;
+
+    history.push({ role: 'user', parts: [{ text: userMsg }] });
+
+    const aiMsg = { role: 'model', content: '', model: modelLabel(model), agent: agentLabel };
+    conv.messages.push(aiMsg);
+    saveConvs();
+    addStreamingMessageAgent(aiMsg, agentLabel);
+
+    try {
+      await streamGeminiAgent(apiKey, model, systemP, history, aiMsg);
+      history.push({ role: 'model', parts: [{ text: aiMsg.content }] });
+      lastContent = aiMsg.content.slice(0, 300);
+    } catch (err) {
+      aiMsg.content = `**Erreur Agent ${agentLabel}:** ${err.message}`;
+    }
+
+    saveConvs();
+    renderMessages();
+    await sleep(500);
+  }
+
+  // Summary
+  conv.messages.push({ role: 'user', content: '_[Fin du débat multi-agent]_' });
+  renderMessages();
+  saveConvs();
+
+  isStreaming = false;
+  document.getElementById('sendBtn').disabled = false;
+  showToast('Débat terminé !');
+}
+
+function addStreamingMessageAgent(aiMsg, agent) {
+  const container = document.getElementById('messages');
+  const existing = document.getElementById('streaming-msg');
+  if (existing) existing.remove();
+
+  const colorClass = agent === 'A'
+    ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'
+    : 'bg-pink-500/10 text-pink-400 border border-pink-500/20';
+  const dotColor = agent === 'A' ? 'bg-indigo-400' : 'bg-pink-400';
+
+  const div = document.createElement('div');
+  div.id = 'streaming-msg';
+  div.className = 'slide-in';
+  div.innerHTML = `
+    <div class="flex items-center gap-2 mb-1.5">
+      <span class="ai-agent-badge ${colorClass}">
+        <div class="w-1.5 h-1.5 rounded-full ${dotColor} animate-pulse"></div>
+        Agent ${agent} · ${escHtml(aiMsg.model)}
+      </span>
+    </div>
+    <div class="message-ai ${agent === 'A' ? 'agent-a' : 'agent-b'} px-4 py-3 text-sm text-[#c8c8e0]">
+      <span id="streaming-content" class="cursor-blink"></span>
+    </div>
+  `;
+  container.appendChild(div);
+  scrollToBottom();
+}
+
+async function streamGeminiAgent(apiKey, model, systemPrompt, history, aiMsg) {
+  const temperature = parseFloat(document.getElementById('tempSlider').value);
+  const topP = parseFloat(document.getElementById('topPSlider').value);
+
+  const body = {
+    contents: history,
+    generationConfig: { temperature, topP, maxOutputTokens: 2048 }
+  };
+
+  if (systemPrompt) {
+    body.systemInstruction = { parts: [{ text: systemPrompt }] };
+  }
+
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?key=${apiKey}&alt=sse`;
+  const resp = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+
+  if (!resp.ok) {
+    const err = await resp.json();
+    throw new Error(err.error?.message || `HTTP ${resp.status}`);
+  }
+
+  const reader = resp.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  const streamEl = document.getElementById('streaming-content');
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop();
+    for (const line of lines) {
+      if (!line.startsWith('data: ')) continue;
+      const jsonStr = line.slice(6).trim();
+      if (!jsonStr || jsonStr === '[DONE]') continue;
+      try {
+        const chunk = JSON.parse(jsonStr);
+        const text = chunk.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        if (text) {
+          aiMsg.content += text;
+          if (streamEl) {
+            streamEl.innerHTML = marked.parse(aiMsg.content);
+          }
+          scrollToBottom();
+        }
+      } catch {}
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════════════
+function openSettings() {
+  document.getElementById('settingsModal').classList.add('open');
+}
+
+function closeSettings() {
+  document.getElementById('settingsModal').classList.remove('open');
+}
+
+function saveSettings() {
+  const key = document.getElementById('apiKeyInput').value.trim();
+  const model = document.getElementById('defaultModel').value;
+  if (key) localStorage.setItem('nexus_api_key', key);
+  localStorage.setItem('nexus_model', model);
+  document.getElementById('modelSelect').value = model;
+  closeSettings();
+  showToast('Paramètres sauvegardés !');
+}
+
+function toggleApiKeyVis() {
+  const inp = document.getElementById('apiKeyInput');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+// ═══════════════════════════════════════════════
+// UI HELPERS
+// ═══════════════════════════════════════════════
+function toggleConfigPanel() {
+  const panel = document.getElementById('configPanel');
+  const btn = document.getElementById('configToggleBtn');
+  panel.classList.toggle('hidden');
+  btn.classList.toggle('text-[#6366f1]');
+}
+
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('active');
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('active');
+}
+
+function handleKeyDown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 160) + 'px';
+}
+
+function escHtml(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function modelLabel(m) {
+  const map = {
+    'gemini-1.5-pro-latest': '1.5 Pro',
+    'gemini-1.5-flash-latest': '1.5 Flash',
+    'gemini-2.0-flash-exp': '2.0 Flash',
+  };
+  return map[m] || m;
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// Toast notification
+function showToast(msg, type = 'success') {
+  const existing = document.getElementById('toast');
+  if (existing) existing.remove();
+
+  const toast = document.createElement('div');
+  toast.id = 'toast';
+  toast.className = `fixed bottom-24 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-xl text-xs font-600 font-mono fade-in ${
+    type === 'error' ? 'bg-red-500/20 border border-red-500/30 text-red-300' : 'bg-[#14141f] border border-[#6366f1]/30 text-[#a5b4fc]'
+  }`;
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2500);
+}
+
+// Close settings on background click
+document.getElementById('settingsModal').addEventListener('click', function(e) {
+  if (e.target === this) closeSettings();
+});
+
+// Configure marked
+marked.setOptions({
+  breaks: true,
+  gfm: true,
+  highlight: function(code, lang) {
+    if (Prism.languages[lang]) {
+      return Prism.highlight(code, Prism.languages[lang], lang);
+    }
+    return code;
+  }
+});
+
+// Init
+init();
+
+// Show settings if no API key
+if (!localStorage.getItem('nexus_api_key')) {
+  setTimeout(openSettings, 400);
+}
+</script>
+
+</body>
+</html>
