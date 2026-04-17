@@ -124,11 +124,12 @@
     <div id="panel-keys">
       <div class="space-y-2 mb-4" id="keysList"></div>
       <div class="flex gap-2">
-        <input id="newKeyInput" type="password" placeholder="AIza… Nouvelle clé Google Gemini" class="flex-1 bg-[#0a0a18] border border-[#1e1e38] rounded-xl px-3 py-2.5 text-xs font-mono text-[#e2e2f0] placeholder-[#303050] focus:border-[#6366f1] outline-none transition-colors">
+        <input id="newKeyInput" type="password" placeholder="Clé API Gemini (AIza... ou autre)" class="flex-1 bg-[#0a0a18] border border-[#1e1e38] rounded-xl px-3 py-2.5 text-xs font-mono text-[#e2e2f0] placeholder-[#303050] focus:border-[#6366f1] outline-none transition-colors">
         <input id="newKeyLabel" type="text" placeholder="Label" class="w-24 bg-[#0a0a18] border border-[#1e1e38] rounded-xl px-3 py-2.5 text-xs text-[#e2e2f0] placeholder-[#303050] focus:border-[#6366f1] outline-none transition-colors">
         <button onclick="addKey()" class="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-xs font-700 text-white transition-colors">+</button>
       </div>
       <p class="text-[.65rem] text-[#303050] mt-2 font-mono">Clés chiffrées AES-GCM dans localStorage. Rotation automatique sur quota 429.</p>
+      <p class="text-[.65rem] text-[#6366f1] mt-1 font-mono">💡 Les clés commençant par "AIza" sont standards. D'autres formats (ex: AQ...) peuvent être testés.</p>
     </div>
 
     <!-- TAB: PARAMS -->
@@ -374,7 +375,8 @@
       const keyVal = document.getElementById('newKeyInput').value.trim();
       const label = document.getElementById('newKeyLabel').value.trim() || `Clé ${getRawKeys().length + 1}`;
       if (!keyVal) { toast('Entre une clé API !', 'error'); return; }
-      if (!keyVal.startsWith('AIza')) { toast('Clé invalide (doit commencer par AIza)', 'error'); return; }
+      // ✅ Suppression de la vérification "AIza" pour accepter d'autres formats
+      // if (!keyVal.startsWith('AIza')) { toast('Clé invalide (doit commencer par AIza)', 'error'); return; }
 
       const enc = await encrypt(keyVal);
       const raw = getRawKeys();
@@ -422,11 +424,12 @@
           toast(`✓ Clé "${kObj.label}" valide`, 'success');
         } else {
           kObj.status = resp.status === 429 ? 'quota' : 'err';
-          toast(`✗ ${kObj.label}: ${json.error?.message?.slice(0, 60)}`, 'error');
+          const errMsg = json.error?.message || `HTTP ${resp.status}`;
+          toast(`✗ ${kObj.label}: ${errMsg.slice(0, 80)}`, 'error');
         }
       } catch (e) {
         kObj.status = 'err';
-        toast('Erreur réseau', 'error');
+        toast(`Erreur réseau: ${e.message}`, 'error');
       }
 
       const idx = raw.findIndex(k => k.id === id);
@@ -507,7 +510,6 @@
       if (curKey) {
         const k = raw.find(r => r.id === curKey.id);
         if (k) { k.status = 'quota'; saveRawKeys(raw); }
-        // Mettre à jour keyCache directement
         curKey.status = 'quota';
       }
       if (keyCache.length > 1) {
