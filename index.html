@@ -1,113 +1,106 @@
 <!DOCTYPE html>
-
 <html lang="fr" class="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover,maximum-scale=1">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>NEXUS PRO · Gemini</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/marked@9/marked.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
-<script>tailwind.config={darkMode:'class',theme:{extend:{fontFamily:{sans:['Inter','sans-serif'],mono:['JetBrains Mono','monospace']}}}}</script>
-<style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:'Inter',sans-serif;background:#080810;color:#e2e2f0;overflow:hidden;height:100dvh;height:100vh}
-::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#252535;border-radius:4px}
-.glass{background:rgba(12,12,22,0.85);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
-.glass-light{background:rgba(20,20,35,0.7);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
-.sidebar-bg{background:#0c0c18;border-right:1px solid #1a1a2e}
-.glow-focus:focus-within{box-shadow:0 0 0 1.5px rgba(99,102,241,.5),0 0 24px rgba(99,102,241,.12)}
-.glow-focus{box-shadow:0 0 0 1px #1e1e32;transition:box-shadow .2s}
-.btn-send{background:linear-gradient(135deg,#6366f1,#8b5cf6);transition:all .2s}
-.btn-send:hover{box-shadow:0 0 20px rgba(99,102,241,.45);transform:translateY(-1px) scale(1.04)}
-.btn-send:active{transform:scale(.96)}
-.btn-send:disabled{opacity:.35;transform:none;box-shadow:none}
-.conv-item{border:1px solid transparent;transition:all .15s;cursor:pointer}
-.conv-item:hover{background:#12122a;border-color:#1e1e38}
-.conv-item.active{background:#14142e;border-color:rgba(99,102,241,.45)}
-.msg-user{background:linear-gradient(135deg,rgba(99,102,241,.18),rgba(139,92,246,.12));border:1px solid rgba(99,102,241,.25);border-radius:18px 18px 4px 18px}
-.msg-ai{background:#111120;border:1px solid #1a1a2e;border-radius:18px 18px 18px 4px}
-.msg-ai p{margin:.4rem 0;line-height:1.75}
-.msg-ai h1,.msg-ai h2,.msg-ai h3{font-weight:700;margin:.9rem 0 .4rem;color:#f0f0ff}
-.msg-ai h1{font-size:1.2rem}.msg-ai h2{font-size:1.05rem}.msg-ai h3{font-size:.95rem}
-.msg-ai ul,.msg-ai ol{padding-left:1.4rem;margin:.4rem 0}
-.msg-ai li{margin:.2rem 0;line-height:1.7}
-.msg-ai strong{color:#f0f0ff;font-weight:600}
-.msg-ai em{color:#c4b5fd}
-.msg-ai a{color:#818cf8;text-decoration:underline}
-.msg-ai table{border-collapse:collapse;width:100%;margin:.6rem 0;font-size:.82rem}
-.msg-ai th{background:#1a1a30;padding:.5rem .7rem;text-align:left;border:1px solid #252540;color:#e2e2f0;font-weight:600}
-.msg-ai td{padding:.4rem .7rem;border:1px solid #1e1e38;color:#b0b0d0}
-.msg-ai tr:nth-child(even) td{background:#12121e}
-.msg-ai blockquote{border-left:3px solid #6366f1;margin:.5rem 0;padding:.3rem .8rem;color:#8888aa;font-style:italic}
-.code-wrap{position:relative;margin:.7rem 0;border-radius:12px;overflow:hidden;border:1px solid #1e1e38}
-.code-header{display:flex;align-items:center;justify-content:space-between;background:#0e0e1e;padding:.4rem .8rem;border-bottom:1px solid #1e1e38}
-.code-lang-badge{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:#6366f1;text-transform:uppercase;letter-spacing:.08em}
-.copy-code-btn{font-size:.65rem;font-family:'JetBrains Mono',monospace;color:#5555aa;background:#1a1a2e;border:1px solid #252540;border-radius:6px;padding:.2rem .55rem;cursor:pointer;transition:all .15s}
-.copy-code-btn:hover{color:#a5b4fc;border-color:#6366f1}
-.msg-ai pre{background:#090916!important;padding:.9rem 1rem!important;margin:0!important;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.78rem;line-height:1.6}
-.msg-ai code:not(pre code){background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.22);border-radius:4px;padding:1px 5px;font-family:'JetBrains Mono',monospace;font-size:.83em;color:#a5b4fc}
-.skeleton{background:linear-gradient(90deg,#111120 25%,#1a1a30 50%,#111120 75%);background-size:200% 100%;animation:skel 1.4s ease infinite}
-@keyframes skel{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.typing-cursor::after{content:'▊';animation:blink .65s step-start infinite;color:#6366f1;font-size:.85em}
-@keyframes blink{50%{opacity:0}}
-.slide-up{animation:slideUp .22s cubic-bezier(.34,1.56,.64,1)}
-@keyframes slideUp{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
-.fade-in{animation:fadeIn .18s ease}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.spin{animation:spin 1s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.dot-live{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px rgba(34,197,94,.6);animation:livePulse 2s ease infinite}
-@keyframes livePulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.6);opacity:.5}}
-.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(6px);z-index:999;align-items:center;justify-content:center}
-.modal-bg.open{display:flex}
-.modal-box{background:#0e0e1c;border:1px solid #1e1e38;border-radius:20px;padding:1.5rem;width:100%;max-width:480px;max-height:90dvh;max-height:90vh;overflow-y:auto;position:relative}
-.modal-box::-webkit-scrollbar{display:none}
-.key-card{background:#0a0a18;border:1px solid #1e1e38;border-radius:12px;padding:.75rem 1rem;transition:border-color .15s}
-.key-card.ok{border-color:rgba(34,197,94,.35)}
-.key-card.err{border-color:rgba(239,68,68,.35)}
-.key-card.testing{border-color:rgba(99,102,241,.35)}
-.range-sl{-webkit-appearance:none;appearance:none;height:3px;border-radius:2px;background:#1e1e38;outline:none;width:100%;cursor:pointer}
-.range-sl::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#6366f1;box-shadow:0 0 8px rgba(99,102,241,.4);cursor:pointer}
-.tag{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:.62rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
-.toast-container{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;align-items:center;gap:.5rem;pointer-events:none}
-.toast{padding:.45rem 1rem;border-radius:12px;font-size:.75rem;font-weight:600;font-family:'JetBrains Mono',monospace;animation:slideUp .2s ease;pointer-events:none}
-.toast.success{background:#0f2a1a;border:1px solid rgba(34,197,94,.3);color:#4ade80}
-.toast.error{background:#2a0f0f;border:1px solid rgba(239,68,68,.3);color:#f87171}
-.toast.info{background:#14142e;border:1px solid rgba(99,102,241,.3);color:#a5b4fc}
-#scrollBtn{position:absolute;bottom:7rem;right:1.2rem;z-index:50;width:36px;height:36px;border-radius:50%;background:#14142e;border:1px solid #252550;color:#6366f1;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(0,0,0,.5)}
-#scrollBtn:hover{background:#1e1e3e;border-color:#6366f1;box-shadow:0 0 14px rgba(99,102,241,.3)}
-@media(max-width:768px){#sidebar{position:fixed;left:-270px;top:0;bottom:0;z-index:500;width:270px;transition:left .28s cubic-bezier(.4,0,.2,1)}#sidebar.open{left:0}#overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:499}#overlay.active{display:block}}
-textarea:focus{outline:none}
-.export-btn{background:#0e0e1e;border:1px solid #1e1e38;border-radius:8px;padding:.35rem .7rem;font-size:.72rem;color:#8888aa;cursor:pointer;transition:all .15s;font-family:'JetBrains Mono',monospace}
-.export-btn:hover{border-color:#6366f1;color:#a5b4fc}
-.stop-btn{background:#2a0f0f;border:1px solid rgba(239,68,68,.4);color:#f87171;border-radius:10px;padding:.35rem .75rem;font-size:.72rem;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:.35rem;font-weight:600}
-.stop-btn:hover{background:#3a1010;box-shadow:0 0 10px rgba(239,68,68,.2)}
-.safety-chip{padding:.25rem .6rem;border-radius:8px;font-size:.65rem;font-family:'JetBrains Mono',monospace;font-weight:600;cursor:pointer;border:1px solid transparent;transition:all .15s}
-.safety-chip.active{background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.4);color:#f87171}
-.safety-chip.inactive{background:#0e0e1e;border-color:#1e1e38;color:#5555aa}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover,maximum-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>NEXUS PRO · Gemini</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@9/marked.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+  <script>tailwind.config={darkMode:'class',theme:{extend:{fontFamily:{sans:['Inter','sans-serif'],mono:['JetBrains Mono','monospace']}}}}</script>
+  <style>
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{font-family:'Inter',sans-serif;background:#080810;color:#e2e2f0;overflow:hidden;height:100dvh;height:100vh}
+    ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#252535;border-radius:4px}
+    .glass{background:rgba(12,12,22,0.85);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
+    .glass-light{background:rgba(20,20,35,0.7);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+    .sidebar-bg{background:#0c0c18;border-right:1px solid #1a1a2e}
+    .glow-focus:focus-within{box-shadow:0 0 0 1.5px rgba(99,102,241,.5),0 0 24px rgba(99,102,241,.12)}
+    .glow-focus{box-shadow:0 0 0 1px #1e1e32;transition:box-shadow .2s}
+    .btn-send{background:linear-gradient(135deg,#6366f1,#8b5cf6);transition:all .2s}
+    .btn-send:hover{box-shadow:0 0 20px rgba(99,102,241,.45);transform:translateY(-1px) scale(1.04)}
+    .btn-send:active{transform:scale(.96)}
+    .btn-send:disabled{opacity:.35;transform:none;box-shadow:none}
+    .conv-item{border:1px solid transparent;transition:all .15s;cursor:pointer}
+    .conv-item:hover{background:#12122a;border-color:#1e1e38}
+    .conv-item.active{background:#14142e;border-color:rgba(99,102,241,.45)}
+    .msg-user{background:linear-gradient(135deg,rgba(99,102,241,.18),rgba(139,92,246,.12));border:1px solid rgba(99,102,241,.25);border-radius:18px 18px 4px 18px}
+    .msg-ai{background:#111120;border:1px solid #1a1a2e;border-radius:18px 18px 18px 4px}
+    .msg-ai p{margin:.4rem 0;line-height:1.75}
+    .msg-ai h1,.msg-ai h2,.msg-ai h3{font-weight:700;margin:.9rem 0 .4rem;color:#f0f0ff}
+    .msg-ai h1{font-size:1.2rem}.msg-ai h2{font-size:1.05rem}.msg-ai h3{font-size:.95rem}
+    .msg-ai ul,.msg-ai ol{padding-left:1.4rem;margin:.4rem 0}
+    .msg-ai li{margin:.2rem 0;line-height:1.7}
+    .msg-ai strong{color:#f0f0ff;font-weight:600}
+    .msg-ai em{color:#c4b5fd}
+    .msg-ai a{color:#818cf8;text-decoration:underline}
+    .msg-ai table{border-collapse:collapse;width:100%;margin:.6rem 0;font-size:.82rem}
+    .msg-ai th{background:#1a1a30;padding:.5rem .7rem;text-align:left;border:1px solid #252540;color:#e2e2f0;font-weight:600}
+    .msg-ai td{padding:.4rem .7rem;border:1px solid #1e1e38;color:#b0b0d0}
+    .msg-ai tr:nth-child(even) td{background:#12121e}
+    .msg-ai blockquote{border-left:3px solid #6366f1;margin:.5rem 0;padding:.3rem .8rem;color:#8888aa;font-style:italic}
+    .code-wrap{position:relative;margin:.7rem 0;border-radius:12px;overflow:hidden;border:1px solid #1e1e38}
+    .code-header{display:flex;align-items:center;justify-content:space-between;background:#0e0e1e;padding:.4rem .8rem;border-bottom:1px solid #1e1e38}
+    .code-lang-badge{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:#6366f1;text-transform:uppercase;letter-spacing:.08em}
+    .copy-code-btn{font-size:.65rem;font-family:'JetBrains Mono',monospace;color:#5555aa;background:#1a1a2e;border:1px solid #252540;border-radius:6px;padding:.2rem .55rem;cursor:pointer;transition:all .15s}
+    .copy-code-btn:hover{color:#a5b4fc;border-color:#6366f1}
+    .msg-ai pre{background:#090916!important;padding:.9rem 1rem!important;margin:0!important;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.78rem;line-height:1.6}
+    .msg-ai code:not(pre code){background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.22);border-radius:4px;padding:1px 5px;font-family:'JetBrains Mono',monospace;font-size:.83em;color:#a5b4fc}
+    .skeleton{background:linear-gradient(90deg,#111120 25%,#1a1a30 50%,#111120 75%);background-size:200% 100%;animation:skel 1.4s ease infinite}
+    @keyframes skel{0%{background-position:200% 0}100%{background-position:-200% 0}}
+    .typing-cursor::after{content:'▊';animation:blink .65s step-start infinite;color:#6366f1;font-size:.85em}
+    @keyframes blink{50%{opacity:0}}
+    .slide-up{animation:slideUp .22s cubic-bezier(.34,1.56,.64,1)}
+    @keyframes slideUp{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+    .fade-in{animation:fadeIn .18s ease}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    .spin{animation:spin 1s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .dot-live{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px rgba(34,197,94,.6);animation:livePulse 2s ease infinite}
+    @keyframes livePulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.6);opacity:.5}}
+    .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(6px);z-index:999;align-items:center;justify-content:center}
+    .modal-bg.open{display:flex}
+    .modal-box{background:#0e0e1c;border:1px solid #1e1e38;border-radius:20px;padding:1.5rem;width:100%;max-width:480px;max-height:90dvh;max-height:90vh;overflow-y:auto;position:relative}
+    .modal-box::-webkit-scrollbar{display:none}
+    .key-card{background:#0a0a18;border:1px solid #1e1e38;border-radius:12px;padding:.75rem 1rem;transition:border-color .15s}
+    .key-card.ok{border-color:rgba(34,197,94,.35)}
+    .key-card.err{border-color:rgba(239,68,68,.35)}
+    .key-card.testing{border-color:rgba(99,102,241,.35)}
+    .range-sl{-webkit-appearance:none;appearance:none;height:3px;border-radius:2px;background:#1e1e38;outline:none;width:100%;cursor:pointer}
+    .range-sl::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#6366f1;box-shadow:0 0 8px rgba(99,102,241,.4);cursor:pointer}
+    .tag{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:.62rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
+    .toast-container{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;align-items:center;gap:.5rem;pointer-events:none}
+    .toast{padding:.45rem 1rem;border-radius:12px;font-size:.75rem;font-weight:600;font-family:'JetBrains Mono',monospace;animation:slideUp .2s ease;pointer-events:none}
+    .toast.success{background:#0f2a1a;border:1px solid rgba(34,197,94,.3);color:#4ade80}
+    .toast.error{background:#2a0f0f;border:1px solid rgba(239,68,68,.3);color:#f87171}
+    .toast.info{background:#14142e;border:1px solid rgba(99,102,241,.3);color:#a5b4fc}
+    #scrollBtn{position:absolute;bottom:7rem;right:1.2rem;z-index:50;width:36px;height:36px;border-radius:50%;background:#14142e;border:1px solid #252550;color:#6366f1;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(0,0,0,.5)}
+    #scrollBtn:hover{background:#1e1e3e;border-color:#6366f1;box-shadow:0 0 14px rgba(99,102,241,.3)}
+    @media(max-width:768px){#sidebar{position:fixed;left:-270px;top:0;bottom:0;z-index:500;width:270px;transition:left .28s cubic-bezier(.4,0,.2,1)}#sidebar.open{left:0}#overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:499}#overlay.active{display:block}}
+    textarea:focus{outline:none}
+    .export-btn{background:#0e0e1e;border:1px solid #1e1e38;border-radius:8px;padding:.35rem .7rem;font-size:.72rem;color:#8888aa;cursor:pointer;transition:all .15s;font-family:'JetBrains Mono',monospace}
+    .export-btn:hover{border-color:#6366f1;color:#a5b4fc}
+    .stop-btn{background:#2a0f0f;border:1px solid rgba(239,68,68,.4);color:#f87171;border-radius:10px;padding:.35rem .75rem;font-size:.72rem;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:.35rem;font-weight:600}
+    .stop-btn:hover{background:#3a1010;box-shadow:0 0 10px rgba(239,68,68,.2)}
+    .safety-chip{padding:.25rem .6rem;border-radius:8px;font-size:.65rem;font-family:'JetBrains Mono',monospace;font-weight:600;cursor:pointer;border:1px solid transparent;transition:all .15s}
+    .safety-chip.active{background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.4);color:#f87171}
+    .safety-chip.inactive{background:#0e0e1e;border-color:#1e1e38;color:#5555aa}
+  </style>
 </head>
 <body>
 
-<!-- TOAST CONTAINER -->
-
 <div class="toast-container" id="toastContainer"></div>
-
-<!-- SIDEBAR OVERLAY -->
-
 <div id="overlay" onclick="closeSidebar()"></div>
 
 <!-- SETTINGS MODAL -->
-
 <div class="modal-bg" id="settingsModal" onclick="e=>e.target===this&&closeSettings()">
   <div class="modal-box slide-up" onclick="event.stopPropagation()">
     <div class="flex items-center justify-between mb-5">
@@ -120,110 +113,90 @@ textarea:focus{outline:none}
       </button>
     </div>
 
-```
-<!-- TABS -->
-<div class="flex gap-1 mb-5 bg-[#0a0a18] rounded-xl p-1">
-  <button onclick="switchSettingsTab('keys')" id="tab-keys" class="flex-1 py-2 rounded-lg text-xs font-700 transition-all active-tab">Clés API</button>
-  <button onclick="switchSettingsTab('params')" id="tab-params" class="flex-1 py-2 rounded-lg text-xs font-700 transition-all inactive-tab">Génération</button>
-  <button onclick="switchSettingsTab('system')" id="tab-system" class="flex-1 py-2 rounded-lg text-xs font-700 transition-all inactive-tab">System</button>
-</div>
-
-<!-- TAB: KEYS -->
-<div id="panel-keys">
-  <div class="space-y-2 mb-4" id="keysList"></div>
-  <div class="flex gap-2">
-    <input id="newKeyInput" type="password" placeholder="AIza… Nouvelle clé Google Gemini"
-      class="flex-1 bg-[#0a0a18] border border-[#1e1e38] rounded-xl px-3 py-2.5 text-xs font-mono text-[#e2e2f0] placeholder-[#303050] focus:border-[#6366f1] outline-none transition-colors">
-    <input id="newKeyLabel" type="text" placeholder="Label"
-      class="w-24 bg-[#0a0a18] border border-[#1e1e38] rounded-xl px-3 py-2.5 text-xs text-[#e2e2f0] placeholder-[#303050] focus:border-[#6366f1] outline-none transition-colors">
-    <button onclick="addKey()" class="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-xs font-700 text-white transition-colors">+</button>
-  </div>
-  <p class="text-[.65rem] text-[#303050] mt-2 font-mono">Clés chiffrées AES-GCM dans localStorage. Rotation automatique sur quota 429.</p>
-</div>
-
-<!-- TAB: PARAMS -->
-<div id="panel-params" class="hidden space-y-5">
-  <!-- Model -->
-  <div>
-    <label class="settings-label">Modèle par défaut</label>
-    <select id="defaultModel" class="w-full bg-[#0a0a18] border border-[#1e1e38] rounded-xl px-3 py-2.5 text-xs text-[#e2e2f0] outline-none focus:border-[#6366f1] transition-colors mt-1.5">
-      <option value="gemini-1.5-flash">gemini-1.5-flash (v1) ⚡</option>
-      <option value="gemini-1.5-pro">gemini-1.5-pro (v1)</option>
-      <option value="gemini-1.5-flash-8b">gemini-1.5-flash-8b (v1) 🔥</option>
-      <option value="gemini-2.0-flash">gemini-2.0-flash (v1beta) ✨</option>
-    </select>
-  </div>
-  <!-- Temp -->
-  <div>
-    <div class="flex justify-between">
-      <label class="settings-label">Température</label>
-      <span class="text-xs font-mono text-[#6366f1]" id="tempDisplay">0.70</span>
+    <!-- TABS -->
+    <div class="flex gap-1 mb-5 bg-[#0a0a18] rounded-xl p-1">
+      <button onclick="switchSettingsTab('keys')" id="tab-keys" class="flex-1 py-2 rounded-lg text-xs font-700 transition-all active-tab">Clés API</button>
+      <button onclick="switchSettingsTab('params')" id="tab-params" class="flex-1 py-2 rounded-lg text-xs font-700 transition-all inactive-tab">Génération</button>
+      <button onclick="switchSettingsTab('system')" id="tab-system" class="flex-1 py-2 rounded-lg text-xs font-700 transition-all inactive-tab">System</button>
     </div>
-    <input type="range" id="tempSlider" min="0" max="2" step="0.01" value="0.7" class="range-sl mt-2"
-      oninput="document.getElementById('tempDisplay').textContent=parseFloat(this.value).toFixed(2)">
-    <div class="flex justify-between text-[.65rem] text-[#303050] font-mono mt-1"><span>Déterministe</span><span>Créatif</span></div>
-  </div>
-  <!-- Top-P -->
-  <div>
-    <div class="flex justify-between">
-      <label class="settings-label">Top-P (nucleus)</label>
-      <span class="text-xs font-mono text-[#6366f1]" id="topPDisplay">0.95</span>
-    </div>
-    <input type="range" id="topPSlider" min="0" max="1" step="0.01" value="0.95" class="range-sl mt-2"
-      oninput="document.getElementById('topPDisplay').textContent=parseFloat(this.value).toFixed(2)">
-  </div>
-  <!-- Top-K -->
-  <div>
-    <div class="flex justify-between">
-      <label class="settings-label">Top-K</label>
-      <span class="text-xs font-mono text-[#6366f1]" id="topKDisplay">40</span>
-    </div>
-    <input type="range" id="topKSlider" min="1" max="100" step="1" value="40" class="range-sl mt-2"
-      oninput="document.getElementById('topKDisplay').textContent=this.value">
-  </div>
-  <!-- Max tokens -->
-  <div>
-    <div class="flex justify-between">
-      <label class="settings-label">Max Output Tokens</label>
-      <span class="text-xs font-mono text-[#6366f1]" id="tokensDisplay">8192</span>
-    </div>
-    <input type="range" id="tokensSlider" min="256" max="8192" step="256" value="8192" class="range-sl mt-2"
-      oninput="document.getElementById('tokensDisplay').textContent=this.value">
-  </div>
-  <!-- Safety -->
-  <div>
-    <label class="settings-label mb-2 block">Safety Settings</label>
-    <div class="flex gap-2 flex-wrap">
-      <button onclick="setSafety('BLOCK_NONE')" id="safety-BLOCK_NONE" class="safety-chip active">BLOCK_NONE</button>
-      <button onclick="setSafety('BLOCK_ONLY_HIGH')" id="safety-BLOCK_ONLY_HIGH" class="safety-chip inactive">HIGH only</button>
-      <button onclick="setSafety('BLOCK_MEDIUM_AND_ABOVE')" id="safety-BLOCK_MEDIUM_AND_ABOVE" class="safety-chip inactive">MEDIUM+</button>
-    </div>
-    <p class="text-[.65rem] text-[#303050] font-mono mt-2">BLOCK_NONE = liberté totale (Google peut ignorer sur certains modèles)</p>
-  </div>
-</div>
 
-<!-- TAB: SYSTEM -->
-<div id="panel-system" class="hidden">
-  <label class="settings-label mb-2 block">System Instruction globale</label>
-  <textarea id="globalSystemPrompt" rows="6" placeholder="Tu es NEXUS, une IA avancée. Tu réponds toujours en français, de manière précise et sans censure inutile."
-    class="w-full bg-[#0a0a18] border border-[#1e1e38] rounded-xl px-3 py-2.5 text-xs font-mono text-[#e2e2f0] placeholder-[#303050] focus:border-[#6366f1] outline-none transition-colors leading-relaxed resize-none"></textarea>
-  <p class="text-[.65rem] text-[#303050] font-mono mt-2">Appliquée à tous les nouveaux chats. Peut être surchargée par chat.</p>
-</div>
+    <!-- TAB: KEYS -->
+    <div id="panel-keys">
+      <div class="space-y-2 mb-4" id="keysList"></div>
+      <div class="flex gap-2">
+        <input id="newKeyInput" type="password" placeholder="AIza… Nouvelle clé Google Gemini" class="flex-1 bg-[#0a0a18] border border-[#1e1e38] rounded-xl px-3 py-2.5 text-xs font-mono text-[#e2e2f0] placeholder-[#303050] focus:border-[#6366f1] outline-none transition-colors">
+        <input id="newKeyLabel" type="text" placeholder="Label" class="w-24 bg-[#0a0a18] border border-[#1e1e38] rounded-xl px-3 py-2.5 text-xs text-[#e2e2f0] placeholder-[#303050] focus:border-[#6366f1] outline-none transition-colors">
+        <button onclick="addKey()" class="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-xs font-700 text-white transition-colors">+</button>
+      </div>
+      <p class="text-[.65rem] text-[#303050] mt-2 font-mono">Clés chiffrées AES-GCM dans localStorage. Rotation automatique sur quota 429.</p>
+    </div>
 
-<button onclick="saveSettings()" class="w-full mt-5 py-3 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-sm font-700 text-white transition-colors">
-  Sauvegarder
-</button>
-```
+    <!-- TAB: PARAMS -->
+    <div id="panel-params" class="hidden space-y-5">
+      <div>
+        <label class="settings-label">Modèle par défaut</label>
+        <select id="defaultModel" class="w-full bg-[#0a0a18] border border-[#1e1e38] rounded-xl px-3 py-2.5 text-xs text-[#e2e2f0] outline-none focus:border-[#6366f1] transition-colors mt-1.5">
+          <option value="gemini-1.5-flash">gemini-1.5-flash (v1) ⚡</option>
+          <option value="gemini-1.5-pro">gemini-1.5-pro (v1)</option>
+          <option value="gemini-1.5-flash-8b">gemini-1.5-flash-8b (v1) 🔥</option>
+          <option value="gemini-2.0-flash">gemini-2.0-flash (v1beta) ✨</option>
+        </select>
+      </div>
+      <div>
+        <div class="flex justify-between">
+          <label class="settings-label">Température</label>
+          <span class="text-xs font-mono text-[#6366f1]" id="tempDisplay">0.70</span>
+        </div>
+        <input type="range" id="tempSlider" min="0" max="2" step="0.01" value="0.7" class="range-sl mt-2" oninput="document.getElementById('tempDisplay').textContent=parseFloat(this.value).toFixed(2)">
+        <div class="flex justify-between text-[.65rem] text-[#303050] font-mono mt-1"><span>Déterministe</span><span>Créatif</span></div>
+      </div>
+      <div>
+        <div class="flex justify-between">
+          <label class="settings-label">Top-P (nucleus)</label>
+          <span class="text-xs font-mono text-[#6366f1]" id="topPDisplay">0.95</span>
+        </div>
+        <input type="range" id="topPSlider" min="0" max="1" step="0.01" value="0.95" class="range-sl mt-2" oninput="document.getElementById('topPDisplay').textContent=parseFloat(this.value).toFixed(2)">
+      </div>
+      <div>
+        <div class="flex justify-between">
+          <label class="settings-label">Top-K</label>
+          <span class="text-xs font-mono text-[#6366f1]" id="topKDisplay">40</span>
+        </div>
+        <input type="range" id="topKSlider" min="1" max="100" step="1" value="40" class="range-sl mt-2" oninput="document.getElementById('topKDisplay').textContent=this.value">
+      </div>
+      <div>
+        <div class="flex justify-between">
+          <label class="settings-label">Max Output Tokens</label>
+          <span class="text-xs font-mono text-[#6366f1]" id="tokensDisplay">8192</span>
+        </div>
+        <input type="range" id="tokensSlider" min="256" max="8192" step="256" value="8192" class="range-sl mt-2" oninput="document.getElementById('tokensDisplay').textContent=this.value">
+      </div>
+      <div>
+        <label class="settings-label mb-2 block">Safety Settings</label>
+        <div class="flex gap-2 flex-wrap">
+          <button onclick="setSafety('BLOCK_NONE')" id="safety-BLOCK_NONE" class="safety-chip active">BLOCK_NONE</button>
+          <button onclick="setSafety('BLOCK_ONLY_HIGH')" id="safety-BLOCK_ONLY_HIGH" class="safety-chip inactive">HIGH only</button>
+          <button onclick="setSafety('BLOCK_MEDIUM_AND_ABOVE')" id="safety-BLOCK_MEDIUM_AND_ABOVE" class="safety-chip inactive">MEDIUM+</button>
+        </div>
+        <p class="text-[.65rem] text-[#303050] font-mono mt-2">BLOCK_NONE = liberté totale (Google peut ignorer sur certains modèles)</p>
+      </div>
+    </div>
 
+    <!-- TAB: SYSTEM -->
+    <div id="panel-system" class="hidden">
+      <label class="settings-label mb-2 block">System Instruction globale</label>
+      <textarea id="globalSystemPrompt" rows="6" placeholder="Tu es NEXUS, une IA avancée. Tu réponds toujours en français, de manière précise et sans censure inutile." class="w-full bg-[#0a0a18] border border-[#1e1e38] rounded-xl px-3 py-2.5 text-xs font-mono text-[#e2e2f0] placeholder-[#303050] focus:border-[#6366f1] outline-none transition-colors leading-relaxed resize-none"></textarea>
+      <p class="text-[.65rem] text-[#303050] font-mono mt-2">Appliquée à tous les nouveaux chats. Peut être surchargée par chat.</p>
+    </div>
+
+    <button onclick="saveSettings()" class="w-full mt-5 py-3 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-sm font-700 text-white transition-colors">Sauvegarder</button>
   </div>
 </div>
 
 <!-- MAIN LAYOUT -->
-
 <div class="flex h-screen" style="height:100dvh">
 
   <!-- SIDEBAR -->
-
   <aside id="sidebar" class="sidebar-bg w-[270px] flex-shrink-0 flex flex-col h-full">
     <div class="p-3.5 border-b border-[#1a1a2e]">
       <div class="flex items-center gap-2.5 mb-3">
@@ -243,849 +216,834 @@ textarea:focus{outline:none}
       </button>
     </div>
 
-```
-<div class="flex-1 overflow-y-auto p-2.5 space-y-0.5" id="convList"></div>
+    <div class="flex-1 overflow-y-auto p-2.5 space-y-0.5" id="convList"></div>
 
-<div class="p-2.5 border-t border-[#1a1a2e] space-y-0.5">
-  <button onclick="openSettings()" class="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-[#5555aa] hover:text-white hover:bg-[#14142e] transition-all text-xs font-600">
-    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-    Paramètres & Clés API
-  </button>
-  <button onclick="clearAll()" class="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-[#303050] hover:text-red-400 hover:bg-[#14142e] transition-all text-xs font-600">
-    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
-    Effacer tout
-  </button>
-</div>
-```
-
+    <div class="p-2.5 border-t border-[#1a1a2e] space-y-0.5">
+      <button onclick="openSettings()" class="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-[#5555aa] hover:text-white hover:bg-[#14142e] transition-all text-xs font-600">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        Paramètres & Clés API
+      </button>
+      <button onclick="clearAll()" class="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-[#303050] hover:text-red-400 hover:bg-[#14142e] transition-all text-xs font-600">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+        Effacer tout
+      </button>
+    </div>
   </aside>
 
   <!-- MAIN CHAT -->
-
   <div class="flex-1 flex flex-col min-w-0 relative">
 
-```
-<!-- HEADER -->
-<header class="h-13 flex items-center px-3 gap-2.5 glass border-b border-[#1a1a2e] flex-shrink-0" style="height:52px">
-  <button onclick="toggleSidebar()" class="md:hidden w-8 h-8 flex items-center justify-center rounded-lg text-[#5555aa] hover:text-white hover:bg-[#1e1e38] transition-all">
-    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-  </button>
+    <!-- HEADER -->
+    <header class="h-13 flex items-center px-3 gap-2.5 glass border-b border-[#1a1a2e] flex-shrink-0" style="height:52px">
+      <button onclick="toggleSidebar()" class="md:hidden w-8 h-8 flex items-center justify-center rounded-lg text-[#5555aa] hover:text-white hover:bg-[#1e1e38] transition-all">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <span class="text-sm font-600 text-[#8888bb] flex-1 truncate" id="headerTitle">Nouveau chat</span>
+      <div class="flex items-center gap-2">
+        <div id="keyIndicator" class="hidden items-center gap-1.5 bg-[#111120] border border-[#1e1e38] rounded-lg px-2.5 py-1.5 cursor-pointer hover:border-[#6366f1] transition-colors" onclick="openSettings()" title="Clés API">
+          <div class="w-2 h-2 rounded-full bg-green-400"></div>
+          <span class="text-[.65rem] font-mono text-[#8888bb]" id="keyLabel">—</span>
+        </div>
+        <div class="flex items-center gap-1.5 bg-[#111120] border border-[#1e1e38] rounded-lg px-2.5 py-1.5">
+          <div class="dot-live" style="width:5px;height:5px"></div>
+          <select id="modelSelect" class="bg-transparent text-[.7rem] font-mono text-[#e2e2f0] outline-none cursor-pointer">
+            <option value="gemini-1.5-flash">Flash 1.5 ⚡</option>
+            <option value="gemini-1.5-pro">Pro 1.5</option>
+            <option value="gemini-1.5-flash-8b">Flash 8B 🔥</option>
+            <option value="gemini-2.0-flash">Flash 2.0 ✨</option>
+          </select>
+        </div>
+      </div>
+    </header>
 
-  <span class="text-sm font-600 text-[#8888bb] flex-1 truncate" id="headerTitle">Nouveau chat</span>
-
-  <div class="flex items-center gap-2">
-    <!-- Active key indicator -->
-    <div id="keyIndicator" class="hidden items-center gap-1.5 bg-[#111120] border border-[#1e1e38] rounded-lg px-2.5 py-1.5 cursor-pointer hover:border-[#6366f1] transition-colors" onclick="openSettings()" title="Clés API">
-      <div class="w-2 h-2 rounded-full bg-green-400"></div>
-      <span class="text-[.65rem] font-mono text-[#8888bb]" id="keyLabel">—</span>
+    <!-- MESSAGES -->
+    <div class="flex-1 overflow-y-auto relative" id="messagesArea">
+      <div class="max-w-[680px] mx-auto px-4 py-6 space-y-4 pb-4" id="messages"></div>
+      <div id="scrollBtn" class="hidden" onclick="scrollToBottom(true)">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
     </div>
 
-    <!-- Model selector -->
-    <div class="flex items-center gap-1.5 bg-[#111120] border border-[#1e1e38] rounded-lg px-2.5 py-1.5">
-      <div class="dot-live" style="width:5px;height:5px"></div>
-      <select id="modelSelect" class="bg-transparent text-[.7rem] font-mono text-[#e2e2f0] outline-none cursor-pointer">
-        <option value="gemini-1.5-flash">Flash 1.5 ⚡</option>
-        <option value="gemini-1.5-pro">Pro 1.5</option>
-        <option value="gemini-1.5-flash-8b">Flash 8B 🔥</option>
-        <option value="gemini-2.0-flash">Flash 2.0 ✨</option>
-      </select>
-    </div>
-  </div>
-</header>
-
-<!-- MESSAGES -->
-<div class="flex-1 overflow-y-auto relative" id="messagesArea">
-  <div class="max-w-[680px] mx-auto px-4 py-6 space-y-4 pb-4" id="messages"></div>
-  <!-- Scroll to bottom -->
-  <div id="scrollBtn" class="hidden" onclick="scrollToBottom(true)">
-    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-  </div>
-</div>
-
-<!-- STOP BAR (when streaming) -->
-<div id="stopBar" class="hidden flex-shrink-0 flex justify-center py-2">
-  <button onclick="stopStreaming()" class="stop-btn">
-    <svg width="10" height="10" fill="currentColor" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
-    Arrêter la génération
-  </button>
-</div>
-
-<!-- INPUT -->
-<div class="flex-shrink-0 px-4 pb-4 pt-2 glass border-t border-[#1a1a2e]">
-  <div class="max-w-[680px] mx-auto">
-    <div class="glow-focus bg-[#111120] rounded-2xl flex items-end gap-2 p-2">
-      <textarea id="userInput" rows="1" placeholder="Envoie un message… (⌘↵ ou ↵)"
-        class="flex-1 bg-transparent px-2 py-1.5 text-sm text-[#e2e2f0] placeholder-[#303050] leading-relaxed max-h-36 overflow-y-auto"
-        oninput="autoResize(this)" onkeydown="handleKey(event)"
-      ></textarea>
-      <button onclick="sendMessage()" id="sendBtn" class="btn-send w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0">
-        <svg width="14" height="14" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    <!-- STOP BAR -->
+    <div id="stopBar" class="hidden flex-shrink-0 flex justify-center py-2">
+      <button onclick="stopStreaming()" class="stop-btn">
+        <svg width="10" height="10" fill="currentColor" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
+        Arrêter la génération
       </button>
     </div>
-    <p class="text-center text-[.6rem] text-[#252545] mt-1.5 font-mono">↵ envoyer · ⇧↵ saut · ⌘N nouveau chat</p>
-  </div>
-</div>
-```
 
+    <!-- INPUT -->
+    <div class="flex-shrink-0 px-4 pb-4 pt-2 glass border-t border-[#1a1a2e]">
+      <div class="max-w-[680px] mx-auto">
+        <div class="glow-focus bg-[#111120] rounded-2xl flex items-end gap-2 p-2">
+          <textarea id="userInput" rows="1" placeholder="Envoie un message… (⌘↵ ou ↵)" class="flex-1 bg-transparent px-2 py-1.5 text-sm text-[#e2e2f0] placeholder-[#303050] leading-relaxed max-h-36 overflow-y-auto" oninput="autoResize(this)" onkeydown="handleKey(event)"></textarea>
+          <button onclick="sendMessage()" id="sendBtn" class="btn-send w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0">
+            <svg width="14" height="14" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+        <p class="text-center text-[.6rem] text-[#252545] mt-1.5 font-mono">↵ envoyer · ⇧↵ saut · ⌘N nouveau chat</p>
+      </div>
+    </div>
   </div>
 </div>
 
 <style>
-.settings-label{font-size:.7rem;font-weight:700;color:#6666aa;text-transform:uppercase;letter-spacing:.07em}
-.active-tab{background:#14142e;color:#a5b4fc}
-.inactive-tab{color:#444466}
-.inactive-tab:hover{color:#8888cc}
+  .settings-label{font-size:.7rem;font-weight:700;color:#6666aa;text-transform:uppercase;letter-spacing:.07em}
+  .active-tab{background:#14142e;color:#a5b4fc}
+  .inactive-tab{color:#444466}
+  .inactive-tab:hover{color:#8888cc}
 </style>
 
 <script>
-// ╔══════════════════════════════════════════════════════╗
-// ║  NEXUS PRO · Core Engine                             ║
-// ╚══════════════════════════════════════════════════════╝
+  (function(){
+    // ── MODELS CONFIG ──────────────────────────────────────
+    const MODELS = {
+      'gemini-1.5-flash':    { api: 'v1',     label: 'Flash 1.5' },
+      'gemini-1.5-pro':      { api: 'v1',     label: 'Pro 1.5'   },
+      'gemini-1.5-flash-8b': { api: 'v1',     label: 'Flash 8B'  },
+      'gemini-2.0-flash':    { api: 'v1beta', label: 'Flash 2.0' },
+    };
 
-// ── MODELS CONFIG ──────────────────────────────────────
-const MODELS = {
-  'gemini-1.5-flash':    { api: 'v1',     label: 'Flash 1.5' },
-  'gemini-1.5-pro':      { api: 'v1',     label: 'Pro 1.5'   },
-  'gemini-1.5-flash-8b': { api: 'v1',     label: 'Flash 8B'  },
-  'gemini-2.0-flash':    { api: 'v1beta', label: 'Flash 2.0' },
-};
+    // ── STATE ──────────────────────────────────────────────
+    let convs = [];
+    let activeId = null;
+    let isStreaming = false;
+    let abortCtrl = null;
+    let activeKeyIdx = 0;
+    let safetyMode = 'BLOCK_NONE';
+    let keyCache = []; // { label, key, id, status }
 
-// ── STATE ──────────────────────────────────────────────
-let convs = [];
-let activeId = null;
-let isStreaming = false;
-let abortCtrl = null;
-let activeKeyIdx = 0;
-let safetyMode = 'BLOCK_NONE';
-let keyCache = []; // decrypted keys cache
-
-// ── CRYPTO ─────────────────────────────────────────────
-async function getCryptoKey() {
-  let seed = localStorage.getItem('nx_seed');
-  if (!seed) {
-    seed = Array.from(crypto.getRandomValues(new Uint8Array(24))).join('-');
-    localStorage.setItem('nx_seed', seed);
-  }
-  const km = await crypto.subtle.importKey('raw', new TextEncoder().encode('nexus-pro-v3-' + seed), 'PBKDF2', false, ['deriveKey']);
-  return crypto.subtle.deriveKey(
-    { name: 'PBKDF2', salt: new TextEncoder().encode('nx-salt-v3'), iterations: 8000, hash: 'SHA-256' },
-    km, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
-  );
-}
-
-async function encrypt(text) {
-  const k = await getCryptoKey();
-  const iv = crypto.getRandomValues(new Uint8Array(12));
-  const enc = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, k, new TextEncoder().encode(text));
-  const buf = new Uint8Array(12 + enc.byteLength);
-  buf.set(iv, 0); buf.set(new Uint8Array(enc), 12);
-  return btoa(Array.from(buf, b => String.fromCharCode(b)).join(''));
-}
-
-async function decrypt(data) {
-  try {
-    const k = await getCryptoKey();
-    const buf = Uint8Array.from(atob(data), c => c.charCodeAt(0));
-    const dec = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: buf.slice(0, 12) }, k, buf.slice(12));
-    return new TextDecoder().decode(dec);
-  } catch { return null; }
-}
-
-// ── STORAGE ────────────────────────────────────────────
-function saveState() {
-  try { localStorage.setItem('nx_convs', JSON.stringify(convs)); } catch(e) {}
-}
-
-function loadState() {
-  try { convs = JSON.parse(localStorage.getItem('nx_convs') || '[]'); } catch { convs = []; }
-}
-
-function getRawKeys() {
-  try { return JSON.parse(localStorage.getItem('nx_keys') || '[]'); } catch { return []; }
-}
-
-function saveRawKeys(keys) {
-  localStorage.setItem('nx_keys', JSON.stringify(keys));
-}
-
-async function decryptAllKeys() {
-  const raw = getRawKeys();
-  keyCache = [];
-  for (const k of raw) {
-    const plain = await decrypt(k.enc);
-    if (plain) keyCache.push({ label: k.label, key: plain, id: k.id, status: k.status || 'ok' });
-  }
-  return keyCache;
-}
-
-// ── API KEY MANAGEMENT ─────────────────────────────────
-async function addKey() {
-  const keyVal = document.getElementById('newKeyInput').value.trim();
-  const label = document.getElementById('newKeyLabel').value.trim() || `Clé ${getRawKeys().length + 1}`;
-  if (!keyVal) { toast('Entre une clé API !', 'error'); return; }
-  if (!keyVal.startsWith('AIza')) { toast('Clé invalide (doit commencer par AIza)', 'error'); return; }
-
-  const enc = await encrypt(keyVal);
-  const raw = getRawKeys();
-  raw.push({ id: Date.now().toString(), enc, label, status: 'unknown' });
-  saveRawKeys(raw);
-
-  document.getElementById('newKeyInput').value = '';
-  document.getElementById('newKeyLabel').value = '';
-
-  await decryptAllKeys();
-  renderKeys();
-  toast(`Clé "${label}" ajoutée`, 'success');
-}
-
-async function removeKey(id) {
-  const raw = getRawKeys().filter(k => k.id !== id);
-  saveRawKeys(raw);
-  await decryptAllKeys();
-  renderKeys();
-  updateKeyIndicator();
-  toast('Clé supprimée', 'info');
-}
-
-async function testKey(id) {
-  const raw = getRawKeys();
-  const kObj = raw.find(k => k.id === id);
-  if (!kObj) return;
-
-  const cardEl = document.querySelector(`[data-key-id="${id}"]`);
-  if (cardEl) { cardEl.className = cardEl.className.replace(/\b(ok|err)\b/g, '').trim() + ' testing'; }
-
-  const plain = await decrypt(kObj.enc);
-  if (!plain) { toast('Déchiffrement échoué', 'error'); return; }
-
-  try {
-    const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${plain}`;
-    const resp = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: 'hi' }] }], generationConfig: { maxOutputTokens: 5 } })
-    });
-    const json = await resp.json();
-    if (resp.ok) {
-      kObj.status = 'ok';
-      toast(`✓ Clé "${kObj.label}" valide`, 'success');
-    } else {
-      kObj.status = resp.status === 429 ? 'quota' : 'err';
-      toast(`✗ ${kObj.label}: ${json.error?.message?.slice(0, 60)}`, 'error');
+    // ── CRYPTO ─────────────────────────────────────────────
+    async function getCryptoKey() {
+      let seed = localStorage.getItem('nx_seed');
+      if (!seed) {
+        seed = Array.from(crypto.getRandomValues(new Uint8Array(24))).join('-');
+        localStorage.setItem('nx_seed', seed);
+      }
+      const km = await crypto.subtle.importKey('raw', new TextEncoder().encode('nexus-pro-v3-' + seed), 'PBKDF2', false, ['deriveKey']);
+      return crypto.subtle.deriveKey(
+        { name: 'PBKDF2', salt: new TextEncoder().encode('nx-salt-v3'), iterations: 8000, hash: 'SHA-256' },
+        km, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
+      );
     }
-  } catch (e) {
-    kObj.status = 'err';
-    toast('Erreur réseau', 'error');
-  }
 
-  const idx = raw.findIndex(k => k.id === id);
-  if (idx >= 0) raw[idx] = kObj;
-  saveRawKeys(raw);
-  await decryptAllKeys();
-  renderKeys();
-}
+    async function encrypt(text) {
+      const k = await getCryptoKey();
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      const enc = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, k, new TextEncoder().encode(text));
+      const buf = new Uint8Array(12 + enc.byteLength);
+      buf.set(iv, 0); buf.set(new Uint8Array(enc), 12);
+      return btoa(Array.from(buf, b => String.fromCharCode(b)).join(''));
+    }
 
-function renderKeys() {
-  const raw = getRawKeys();
-  const el = document.getElementById('keysList');
-  if (raw.length === 0) {
-    el.innerHTML = `<div class="text-center py-6 text-xs text-[#303050] font-mono">Aucune clé configurée</div>`;
-    return;
-  }
-  el.innerHTML = raw.map(k => {
-    const statusColors = { ok: 'text-green-400', err: 'text-red-400', quota: 'text-yellow-400', unknown: 'text-[#5555aa]', testing: 'text-indigo-400' };
-    const statusLabels = { ok: '● OK', err: '✗ ERR', quota: '⚠ QUOTA', unknown: '○ ?', testing: '… TEST' };
-    const sc = statusColors[k.status || 'unknown'] || 'text-[#5555aa]';
-    const sl = statusLabels[k.status || 'unknown'] || '○';
-    return `
-      <div class="key-card ${k.status === 'ok' ? 'ok' : k.status === 'err' || k.status === 'quota' ? 'err' : ''}" data-key-id="${k.id}">
-        <div class="flex items-center gap-2">
-          <div class="flex-1 min-w-0">
+    async function decrypt(data) {
+      try {
+        const k = await getCryptoKey();
+        const buf = Uint8Array.from(atob(data), c => c.charCodeAt(0));
+        const dec = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: buf.slice(0, 12) }, k, buf.slice(12));
+        return new TextDecoder().decode(dec);
+      } catch { return null; }
+    }
+
+    // ── STORAGE ────────────────────────────────────────────
+    function saveState() {
+      try { localStorage.setItem('nx_convs', JSON.stringify(convs)); } catch(e) {}
+    }
+    function loadState() {
+      try { convs = JSON.parse(localStorage.getItem('nx_convs') || '[]'); } catch { convs = []; }
+    }
+    function getRawKeys() {
+      try { return JSON.parse(localStorage.getItem('nx_keys') || '[]'); } catch { return []; }
+    }
+    function saveRawKeys(keys) {
+      localStorage.setItem('nx_keys', JSON.stringify(keys));
+    }
+
+    async function decryptAllKeys() {
+      const raw = getRawKeys();
+      keyCache = [];
+      for (const k of raw) {
+        const plain = await decrypt(k.enc);
+        if (plain) keyCache.push({ label: k.label, key: plain, id: k.id, status: k.status || 'ok' });
+      }
+      return keyCache;
+    }
+
+    // ── API KEY MANAGEMENT ─────────────────────────────────
+    window.addKey = async function() {
+      const keyVal = document.getElementById('newKeyInput').value.trim();
+      const label = document.getElementById('newKeyLabel').value.trim() || `Clé ${getRawKeys().length + 1}`;
+      if (!keyVal) { toast('Entre une clé API !', 'error'); return; }
+      if (!keyVal.startsWith('AIza')) { toast('Clé invalide (doit commencer par AIza)', 'error'); return; }
+
+      const enc = await encrypt(keyVal);
+      const raw = getRawKeys();
+      raw.push({ id: Date.now().toString(), enc, label, status: 'unknown' });
+      saveRawKeys(raw);
+
+      document.getElementById('newKeyInput').value = '';
+      document.getElementById('newKeyLabel').value = '';
+
+      await decryptAllKeys();
+      renderKeys();
+      toast(`Clé "${label}" ajoutée`, 'success');
+    };
+
+    window.removeKey = async function(id) {
+      const raw = getRawKeys().filter(k => k.id !== id);
+      saveRawKeys(raw);
+      await decryptAllKeys();
+      renderKeys();
+      updateKeyIndicator();
+      toast('Clé supprimée', 'info');
+    };
+
+    window.testKey = async function(id) {
+      const raw = getRawKeys();
+      const kObj = raw.find(k => k.id === id);
+      if (!kObj) return;
+
+      const cardEl = document.querySelector(`[data-key-id="${id}"]`);
+      if (cardEl) { cardEl.className = cardEl.className.replace(/\b(ok|err)\b/g, '').trim() + ' testing'; }
+
+      const plain = await decrypt(kObj.enc);
+      if (!plain) { toast('Déchiffrement échoué', 'error'); return; }
+
+      try {
+        const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${plain}`;
+        const resp = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: 'hi' }] }], generationConfig: { maxOutputTokens: 5 } })
+        });
+        const json = await resp.json();
+        if (resp.ok) {
+          kObj.status = 'ok';
+          toast(`✓ Clé "${kObj.label}" valide`, 'success');
+        } else {
+          kObj.status = resp.status === 429 ? 'quota' : 'err';
+          toast(`✗ ${kObj.label}: ${json.error?.message?.slice(0, 60)}`, 'error');
+        }
+      } catch (e) {
+        kObj.status = 'err';
+        toast('Erreur réseau', 'error');
+      }
+
+      const idx = raw.findIndex(k => k.id === id);
+      if (idx >= 0) raw[idx] = kObj;
+      saveRawKeys(raw);
+      await decryptAllKeys();
+      renderKeys();
+    };
+
+    function renderKeys() {
+      const raw = getRawKeys();
+      const el = document.getElementById('keysList');
+      if (raw.length === 0) {
+        el.innerHTML = `<div class="text-center py-6 text-xs text-[#303050] font-mono">Aucune clé configurée</div>`;
+        return;
+      }
+      el.innerHTML = raw.map(k => {
+        const statusColors = { ok: 'text-green-400', err: 'text-red-400', quota: 'text-yellow-400', unknown: 'text-[#5555aa]', testing: 'text-indigo-400' };
+        const statusLabels = { ok: '● OK', err: '✗ ERR', quota: '⚠ QUOTA', unknown: '○ ?', testing: '… TEST' };
+        const sc = statusColors[k.status || 'unknown'] || 'text-[#5555aa]';
+        const sl = statusLabels[k.status || 'unknown'] || '○';
+        return `
+          <div class="key-card ${k.status === 'ok' ? 'ok' : k.status === 'err' || k.status === 'quota' ? 'err' : ''}" data-key-id="${k.id}">
             <div class="flex items-center gap-2">
-              <span class="text-xs font-700 text-[#e2e2f0]">${escHtml(k.label)}</span>
-              <span class="text-[.65rem] font-mono ${sc}">${sl}</span>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2">
+                  <span class="text-xs font-700 text-[#e2e2f0]">${escHtml(k.label)}</span>
+                  <span class="text-[.65rem] font-mono ${sc}">${sl}</span>
+                </div>
+                <div class="text-[.65rem] font-mono text-[#333355] mt-0.5">••••••••••••${k.id.slice(-4)}</div>
+              </div>
+              <div class="flex gap-1.5 flex-shrink-0">
+                <button onclick="testKey('${k.id}')" class="export-btn">Test</button>
+                <button onclick="removeKey('${k.id}')" class="export-btn hover:!border-red-500 hover:!text-red-400">✕</button>
+              </div>
             </div>
-            <div class="text-[.65rem] font-mono text-[#333355] mt-0.5">••••••••••••${k.id.slice(-4)}</div>
           </div>
-          <div class="flex gap-1.5 flex-shrink-0">
-            <button onclick="testKey('${k.id}')" class="export-btn">Test</button>
-            <button onclick="removeKey('${k.id}')" class="export-btn hover:!border-red-500 hover:!text-red-400">✕</button>
+        `;
+      }).join('');
+    }
+
+    function updateKeyIndicator() {
+      const indicator = document.getElementById('keyIndicator');
+      const labelEl = document.getElementById('keyLabel');
+      if (keyCache.length === 0) {
+        indicator.classList.add('hidden');
+        indicator.classList.remove('flex');
+      } else {
+        indicator.classList.remove('hidden');
+        indicator.classList.add('flex');
+        const active = keyCache[activeKeyIdx % keyCache.length];
+        labelEl.textContent = active?.label || '—';
+        const dot = indicator.querySelector('.rounded-full');
+        const s = active?.status || 'ok';
+        dot.className = `w-2 h-2 rounded-full ${s === 'ok' ? 'bg-green-400' : s === 'quota' ? 'bg-yellow-400' : 'bg-red-400'}`;
+      }
+    }
+
+    async function getWorkingKey() {
+      if (keyCache.length === 0) { await decryptAllKeys(); }
+      if (keyCache.length === 0) throw new Error('Aucune clé API. Configure une clé dans Paramètres ⚙');
+      for (let i = 0; i < keyCache.length; i++) {
+        const idx = (activeKeyIdx + i) % keyCache.length;
+        const k = keyCache[idx];
+        if (k.status !== 'err') {
+          activeKeyIdx = idx;
+          updateKeyIndicator();
+          return k.key;
+        }
+      }
+      throw new Error('Toutes les clés API sont en erreur ou épuisées');
+    }
+
+    function markKeyQuota() {
+      if (keyCache.length === 0) return false;
+      const raw = getRawKeys();
+      const curKey = keyCache[activeKeyIdx % keyCache.length];
+      if (curKey) {
+        const k = raw.find(r => r.id === curKey.id);
+        if (k) { k.status = 'quota'; saveRawKeys(raw); }
+        // Mettre à jour keyCache directement
+        curKey.status = 'quota';
+      }
+      if (keyCache.length > 1) {
+        activeKeyIdx = (activeKeyIdx + 1) % keyCache.length;
+        updateKeyIndicator();
+        toast(`Quota dépassé → rotation sur "${keyCache[activeKeyIdx]?.label}"`, 'info');
+        return true;
+      }
+      return false;
+    }
+
+    // ── GEMINI API ─────────────────────────────────────────
+    async function callGeminiStream(messages, systemPrompt, onToken, signal, retryCount = 0) {
+      const modelId = document.getElementById('modelSelect').value;
+      const cfg = MODELS[modelId] || { api: 'v1' };
+      const apiKey = await getWorkingKey(modelId);
+
+      const url = `https://generativelanguage.googleapis.com/${cfg.api}/models/${modelId}:streamGenerateContent?key=${apiKey}&alt=sse`;
+
+      const safetySettings = [
+        'HARM_CATEGORY_HARASSMENT', 'HARM_CATEGORY_HATE_SPEECH',
+        'HARM_CATEGORY_SEXUALLY_EXPLICIT', 'HARM_CATEGORY_DANGEROUS_CONTENT'
+      ].map(c => ({ category: c, threshold: safetyMode }));
+
+      const body = {
+        contents: messages.map(m => ({
+          role: m.role === 'user' ? 'user' : 'model',
+          parts: [{ text: m.content }]
+        })),
+        generationConfig: {
+          temperature: parseFloat(document.getElementById('tempSlider').value),
+          topP: parseFloat(document.getElementById('topPSlider').value),
+          topK: parseInt(document.getElementById('topKSlider').value),
+          maxOutputTokens: parseInt(document.getElementById('tokensSlider').value),
+        },
+        safetySettings,
+      };
+
+      if (systemPrompt) body.systemInstruction = { parts: [{ text: systemPrompt }] };
+
+      let resp;
+      try {
+        resp = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+          signal,
+        });
+      } catch (e) {
+        if (e.name === 'AbortError') return;
+        throw new Error('Erreur réseau. Vérifie ta connexion.');
+      }
+
+      if (!resp.ok) {
+        const errData = await resp.json().catch(() => ({}));
+        const msg = errData.error?.message || `HTTP ${resp.status}`;
+
+        if (resp.status === 429 && retryCount < keyCache.length) {
+          const canRetry = markKeyQuota();
+          if (canRetry) {
+            return callGeminiStream(messages, systemPrompt, onToken, signal, retryCount + 1);
+          }
+        }
+        throw new Error(msg);
+      }
+
+      const reader = resp.body.getReader();
+      const dec = new TextDecoder();
+      let buf = '';
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buf += dec.decode(value, { stream: true });
+          const lines = buf.split('\n');
+          buf = lines.pop();
+
+          for (const line of lines) {
+            const t = line.trim();
+            if (!t.startsWith('data:')) continue;
+            const json = t.slice(5).trim();
+            if (!json || json === '[DONE]') continue;
+            try {
+              const chunk = JSON.parse(json);
+              const text = chunk.candidates?.[0]?.content?.parts?.[0]?.text;
+              if (text) onToken(text);
+            } catch {}
+          }
+        }
+      } catch (e) {
+        if (e.name !== 'AbortError') throw e;
+      } finally {
+        reader.releaseLock();
+      }
+    }
+
+    async function autoRename(convId) {
+      const conv = convs.find(c => c.id === convId);
+      if (!conv || conv.messages.length === 0) return;
+      const firstMsg = conv.messages.find(m => m.role === 'user')?.content?.slice(0, 300);
+      if (!firstMsg) return;
+
+      const apiKey = await getWorkingKey().catch(() => null);
+      if (!apiKey) return;
+
+      try {
+        const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+        const resp = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ role: 'user', parts: [{ text: `Génère un titre court (3-5 mots max, sans guillemets) pour cette conversation: "${firstMsg}"` }] }],
+            generationConfig: { maxOutputTokens: 20, temperature: 0.3 },
+          })
+        });
+        const data = await resp.json();
+        const title = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim()?.slice(0, 50);
+        if (title && title.length > 2) {
+          conv.title = title;
+          saveState();
+          renderConvList();
+          if (activeId === convId) document.getElementById('headerTitle').textContent = title;
+        }
+      } catch {}
+    }
+
+    // ── CONVERSATION MANAGEMENT ────────────────────────────
+    window.newChat = function() {
+      const id = 'c_' + Date.now();
+      const sysPrompt = document.getElementById('globalSystemPrompt').value.trim();
+      convs.unshift({ id, title: 'Nouveau chat', messages: [], systemPrompt: sysPrompt, created: Date.now() });
+      saveState();
+      activeId = id;
+      renderConvList();
+      renderMessages();
+      document.getElementById('userInput').focus();
+      closeSidebar();
+    };
+
+    window.loadConv = function(id) {
+      activeId = id;
+      renderConvList();
+      renderMessages();
+      closeSidebar();
+      setTimeout(() => scrollToBottom(false), 50);
+    };
+
+    window.deleteConv = function(id, e) {
+      e.stopPropagation();
+      convs = convs.filter(c => c.id !== id);
+      saveState();
+      if (activeId === id) { activeId = convs[0]?.id || null; renderMessages(); }
+      renderConvList();
+    };
+
+    window.clearAll = function() {
+      if (!confirm('Effacer toutes les conversations ?')) return;
+      convs = []; activeId = null; saveState();
+      renderConvList(); renderMessages();
+    };
+
+    window.exportJSON = function(id, e) {
+      e.stopPropagation();
+      const conv = convs.find(c => c.id === id);
+      if (!conv) return;
+      const blob = new Blob([JSON.stringify(conv, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+      a.download = (conv.title || 'chat') + '.json'; a.click();
+      URL.revokeObjectURL(a.href);
+    };
+
+    window.printConv = function(id, e) {
+      e.stopPropagation();
+      const conv = convs.find(c => c.id === id);
+      if (!conv) return;
+      const w = window.open('', '_blank');
+      const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${conv.title}</title>
+      <style>body{font-family:system-ui,sans-serif;max-width:700px;margin:2rem auto;color:#111;line-height:1.6}
+      .u{background:#eef;border-left:3px solid #6366f1;padding:.5rem 1rem;border-radius:4px;margin:1rem 0}
+      .a{background:#f9f9f9;border-left:3px solid #22c55e;padding:.5rem 1rem;border-radius:4px;margin:1rem 0}
+      pre{background:#111;color:#eee;padding:1rem;border-radius:6px;overflow-x:auto;font-size:.8rem}
+      h1{font-size:1.1rem;color:#6366f1}@media print{body{margin:.5cm}}</style></head>
+      <body><h1>${conv.title}</h1><hr>
+      ${conv.messages.map(m=>`<div class="${m.role==='user'?'u':'a'}"><b>${m.role==='user'?'Vous':'Gemini'}:</b><br>${m.role==='user'?escHtml(m.content):m.content.replace(/</g,'&lt;')}</div>`).join('')}
+      </body></html>`;
+      w.document.write(html); w.document.close(); setTimeout(() => w.print(), 400);
+    };
+
+    // ── RENDERING ──────────────────────────────────────────
+    function renderConvList() {
+      const el = document.getElementById('convList');
+      if (convs.length === 0) {
+        el.innerHTML = `<p class="text-center text-[.65rem] font-mono text-[#252545] py-6">Pas de conversations</p>`;
+        return;
+      }
+      el.innerHTML = convs.map(c => `
+        <div onclick="loadConv('${c.id}')" class="conv-item rounded-xl px-3 py-2 group flex items-center gap-2 ${c.id === activeId ? 'active' : ''}">
+          <svg class="flex-shrink-0 text-[#333355] group-hover:text-[#5555aa]" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          <span class="text-[.72rem] text-[#8888bb] truncate flex-1 leading-tight">${escHtml(c.title)}</span>
+          <div class="opacity-0 group-hover:opacity-100 flex gap-1">
+            <button onclick="exportJSON('${c.id}', event)" title="Export JSON" class="text-[#333355] hover:text-indigo-400 transition-colors p-0.5">
+              <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            </button>
+            <button onclick="printConv('${c.id}', event)" title="Export PDF" class="text-[#333355] hover:text-indigo-400 transition-colors p-0.5">
+              <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            </button>
+            <button onclick="deleteConv('${c.id}', event)" class="text-[#333355] hover:text-red-400 transition-colors p-0.5">
+              <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
           </div>
         </div>
-      </div>
-    `;
-  }).join('');
-}
-
-function updateKeyIndicator() {
-  const indicator = document.getElementById('keyIndicator');
-  const labelEl = document.getElementById('keyLabel');
-  if (keyCache.length === 0) {
-    indicator.classList.add('hidden');
-    indicator.classList.remove('flex');
-  } else {
-    indicator.classList.remove('hidden');
-    indicator.classList.add('flex');
-    const active = keyCache[activeKeyIdx % keyCache.length];
-    labelEl.textContent = active?.label || '—';
-    const dot = indicator.querySelector('.rounded-full');
-    const s = active?.status || 'ok';
-    dot.className = `w-2 h-2 rounded-full ${s === 'ok' ? 'bg-green-400' : s === 'quota' ? 'bg-yellow-400' : 'bg-red-400'}`;
-  }
-}
-
-async function getWorkingKey(modelId) {
-  if (keyCache.length === 0) { await decryptAllKeys(); }
-  if (keyCache.length === 0) throw new Error('Aucune clé API. Configure une clé dans Paramètres ⚙');
-  // Try keys starting from activeKeyIdx
-  for (let i = 0; i < keyCache.length; i++) {
-    const idx = (activeKeyIdx + i) % keyCache.length;
-    const k = keyCache[idx];
-    if (k.status !== 'err') {
-      activeKeyIdx = idx;
-      updateKeyIndicator();
-      return k.key;
+      `).join('');
     }
-  }
-  throw new Error('Toutes les clés API sont en erreur ou épuisées');
-}
 
-function markKeyQuota() {
-  if (keyCache.length === 0) return;
-  const raw = getRawKeys();
-  const curId = getRawKeys()[activeKeyIdx % raw.length]?.id;
-  if (curId) {
-    const k = raw.find(r => r.id === curId);
-    if (k) { k.status = 'quota'; saveRawKeys(raw); }
-  }
-  if (keyCache.length > 1) {
-    activeKeyIdx = (activeKeyIdx + 1) % keyCache.length;
-    updateKeyIndicator();
-    toast(`Quota dépassé → rotation sur "${keyCache[activeKeyIdx]?.label}"`, 'info');
-    return true; // can retry
-  }
-  return false;
-}
+    function renderMessages() {
+      const conv = convs.find(c => c.id === activeId);
+      const container = document.getElementById('messages');
+      document.getElementById('headerTitle').textContent = conv?.title || 'Nouveau chat';
 
-// ── GEMINI API ─────────────────────────────────────────
-async function callGeminiStream(messages, systemPrompt, onToken, signal, retryCount = 0) {
-  const modelId = document.getElementById('modelSelect').value;
-  const cfg = MODELS[modelId] || { api: 'v1' };
-  const apiKey = await getWorkingKey(modelId);
-
-  const url = `https://generativelanguage.googleapis.com/${cfg.api}/models/${modelId}:streamGenerateContent?key=${apiKey}&alt=sse`;
-
-  const safetySettings = [
-    'HARM_CATEGORY_HARASSMENT', 'HARM_CATEGORY_HATE_SPEECH',
-    'HARM_CATEGORY_SEXUALLY_EXPLICIT', 'HARM_CATEGORY_DANGEROUS_CONTENT'
-  ].map(c => ({ category: c, threshold: safetyMode }));
-
-  const body = {
-    contents: messages.map(m => ({
-      role: m.role === 'user' ? 'user' : 'model',
-      parts: [{ text: m.content }]
-    })),
-    generationConfig: {
-      temperature: parseFloat(document.getElementById('tempSlider').value),
-      topP: parseFloat(document.getElementById('topPSlider').value),
-      topK: parseInt(document.getElementById('topKSlider').value),
-      maxOutputTokens: parseInt(document.getElementById('tokensSlider').value),
-    },
-    safetySettings,
-  };
-
-  if (systemPrompt) body.systemInstruction = { parts: [{ text: systemPrompt }] };
-
-  let resp;
-  try {
-    resp = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-      signal,
-    });
-  } catch (e) {
-    if (e.name === 'AbortError') return;
-    throw new Error('Erreur réseau. Vérifie ta connexion.');
-  }
-
-  if (!resp.ok) {
-    const errData = await resp.json().catch(() => ({}));
-    const msg = errData.error?.message || `HTTP ${resp.status}`;
-
-    // 429 quota → rotate key and retry once
-    if (resp.status === 429 && retryCount < keyCache.length) {
-      const canRetry = markKeyQuota();
-      if (canRetry) {
-        await decryptAllKeys();
-        return callGeminiStream(messages, systemPrompt, onToken, signal, retryCount + 1);
+      if (!conv || conv.messages.length === 0) {
+        container.innerHTML = `
+          <div class="flex flex-col items-center justify-center py-20 text-center slide-up">
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] flex items-center justify-center mb-4 shadow-lg" style="box-shadow:0 8px 32px rgba(99,102,241,.3)">
+              <svg width="28" height="28" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            </div>
+            <h2 class="text-lg font-800 text-white mb-2">NEXUS PRO</h2>
+            <p class="text-xs text-[#444466] max-w-xs leading-relaxed">Propulsé par Google Gemini API v1. ${keyCache.length === 0 ? '<br><button onclick="openSettings()" style="color:#a5b4fc;text-decoration:underline;background:none;border:none;cursor:pointer;font-size:inherit">Configure ta clé API →</button>' : keyCache.length + ' clé(s) active(s)'}</p>
+          </div>`;
+        return;
       }
+
+      container.innerHTML = conv.messages.map((m, i) => buildMessageHTML(m, i)).join('');
+      postProcessMessages(container);
+      scrollToBottom(false);
     }
-    throw new Error(msg);
-  }
 
-  // Parse SSE
-  const reader = resp.body.getReader();
-  const dec = new TextDecoder();
-  let buf = '';
-
-  try {
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-
-      buf += dec.decode(value, { stream: true });
-      const lines = buf.split('\n');
-      buf = lines.pop();
-
-      for (const line of lines) {
-        const t = line.trim();
-        if (!t.startsWith('data:')) continue;
-        const json = t.slice(5).trim();
-        if (!json || json === '[DONE]') continue;
-        try {
-          const chunk = JSON.parse(json);
-          const text = chunk.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (text) onToken(text);
-        } catch {}
+    function buildMessageHTML(m, i) {
+      if (m.role === 'user') {
+        return `<div class="slide-up flex justify-end"><div class="msg-user px-4 py-3 max-w-[82%]"><p class="text-sm text-[#e2e2f0] leading-relaxed whitespace-pre-wrap">${escHtml(m.content)}</p></div></div>`;
       }
+      const modelCfg = MODELS[m.model] || {};
+      return `<div class="slide-up group">
+        <div class="flex items-center gap-2 mb-1.5">
+          <span class="tag bg-[#111120] border border-[#1e1e38] text-[#5566cc]">
+            <div style="width:5px;height:5px;border-radius:50%;background:#6366f1;flex-shrink:0"></div>
+            ${escHtml(modelCfg.label || m.model || 'Gemini')}
+          </span>
+          <button onclick="copyMsg(${i})" class="ml-auto text-[.65rem] font-mono text-[#333355] hover:text-indigo-400 transition-colors px-2 py-1 rounded hover:bg-[#111120] opacity-0 group-hover:opacity-100">
+            <svg style="display:inline;width:10px;height:10px;margin-right:3px" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copier
+          </button>
+        </div>
+        <div class="msg-ai px-4 py-3 text-sm text-[#b8b8d8]">
+          ${parseMarkdown(m.content)}
+        </div>
+      </div>`;
     }
-  } catch (e) {
-    if (e.name !== 'AbortError') throw e;
-  } finally {
-    reader.releaseLock();
-  }
-}
 
-async function autoRename(convId) {
-  const conv = convs.find(c => c.id === convId);
-  if (!conv || conv.messages.length === 0) return;
-  const firstMsg = conv.messages.find(m => m.role === 'user')?.content?.slice(0, 300);
-  if (!firstMsg) return;
+    function parseMarkdown(text) {
+      try {
+        return marked.parse(text || '', { breaks: true, gfm: true });
+      } catch { return escHtml(text || ''); }
+    }
 
-  const modelId = 'gemini-1.5-flash';
-  const apiKey = await getWorkingKey(modelId).catch(() => null);
-  if (!apiKey) return;
+    function postProcessMessages(container) {
+      container.querySelectorAll('pre code').forEach(codeEl => {
+        const pre = codeEl.parentElement;
+        if (pre.parentElement?.classList.contains('code-wrap')) return;
+        const lang = [...codeEl.classList].find(c => c.startsWith('language-'))?.replace('language-', '') || 'code';
+        const wrap = document.createElement('div');
+        wrap.className = 'code-wrap';
+        const header = document.createElement('div');
+        header.className = 'code-header';
+        header.innerHTML = `<span class="code-lang-badge">${escHtml(lang)}</span><button class="copy-code-btn" onclick="copyCodeBlock(this)">Copier</button>`;
+        pre.parentNode.insertBefore(wrap, pre);
+        wrap.appendChild(header);
+        wrap.appendChild(pre);
+        if (lang !== 'code' && Prism.languages[lang]) {
+          try { codeEl.innerHTML = Prism.highlight(codeEl.textContent, Prism.languages[lang], lang); } catch {}
+        }
+      });
+      try {
+        renderMathInElement(container, {
+          delimiters: [
+            { left: '$$', right: '$$', display: true },
+            { left: '$', right: '$', display: false },
+            { left: '\\[', right: '\\]', display: true },
+            { left: '\\(', right: '\\)', display: false },
+          ],
+          throwOnError: false,
+        });
+      } catch {}
+    }
 
-  try {
-    const url = `https://generativelanguage.googleapis.com/v1/models/${modelId}:generateContent?key=${apiKey}`;
-    const resp = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ role: 'user', parts: [{ text: `Génère un titre court (3-5 mots max, sans guillemets) pour cette conversation: "${firstMsg}"` }] }],
-        generationConfig: { maxOutputTokens: 20, temperature: 0.3 },
-      })
-    });
-    const data = await resp.json();
-    const title = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim()?.slice(0, 50);
-    if (title && title.length > 2) {
-      conv.title = title;
+    window.copyCodeBlock = function(btn) {
+      const code = btn.closest('.code-wrap').querySelector('code')?.textContent || '';
+      navigator.clipboard.writeText(code).then(() => {
+        btn.textContent = '✓ Copié';
+        setTimeout(() => btn.textContent = 'Copier', 2000);
+      });
+    };
+
+    window.copyMsg = function(i) {
+      const conv = convs.find(c => c.id === activeId);
+      if (!conv) return;
+      navigator.clipboard.writeText(conv.messages[i]?.content || '').then(() => toast('Message copié', 'success'));
+    };
+
+    // ── SEND & STREAM ──────────────────────────────────────
+    window.sendMessage = async function() {
+      if (isStreaming) return;
+      const inp = document.getElementById('userInput');
+      const text = inp.value.trim();
+      if (!text) return;
+
+      if (!activeId) newChat();
+      const conv = convs.find(c => c.id === activeId);
+      if (!conv) return;
+
+      inp.value = ''; autoResize(inp);
+
+      conv.messages.push({ role: 'user', content: text });
+      const isFirst = conv.messages.length === 1;
+      if (isFirst) { conv.title = text.slice(0, 45) + (text.length > 45 ? '…' : ''); }
+      saveState(); renderConvList();
+
+      const modelId = document.getElementById('modelSelect').value;
+      const aiMsg = { role: 'model', content: '', model: modelId };
+      conv.messages.push(aiMsg);
       saveState();
-      renderConvList();
-      if (activeId === convId) document.getElementById('headerTitle').textContent = title;
+
+      renderMessages();
+      addStreamingPlaceholder(aiMsg);
+
+      isStreaming = true;
+      abortCtrl = new AbortController();
+      document.getElementById('sendBtn').disabled = true;
+      document.getElementById('stopBar').classList.remove('hidden');
+
+      const streamEl = document.getElementById('stream-content');
+
+      try {
+        await callGeminiStream(
+          conv.messages.slice(0, -1),
+          conv.systemPrompt || '',
+          (token) => {
+            aiMsg.content += token;
+            if (streamEl) {
+              streamEl.innerHTML = parseMarkdown(aiMsg.content);
+              streamEl.className = 'typing-cursor';
+            }
+            scrollToBottom(false);
+          },
+          abortCtrl.signal
+        );
+      } catch (e) {
+        if (e.name !== 'AbortError') {
+          aiMsg.content = `**Erreur :** ${e.message}`;
+        }
+      }
+
+      isStreaming = false;
+      document.getElementById('sendBtn').disabled = false;
+      document.getElementById('stopBar').classList.add('hidden');
+      abortCtrl = null;
+      saveState();
+      renderMessages();
+
+      if (isFirst) setTimeout(() => autoRename(activeId), 1000);
+    };
+
+    function addStreamingPlaceholder(aiMsg) {
+      const container = document.getElementById('messages');
+      const empty = container.querySelector('[class*="py-20"]');
+      if (empty) container.innerHTML = '';
+
+      const modelCfg = MODELS[aiMsg.model] || {};
+      const div = document.createElement('div');
+      div.id = 'streaming-wrapper';
+      div.className = 'slide-up';
+      div.innerHTML = `
+        <div class="flex items-center gap-2 mb-1.5">
+          <span class="tag bg-[#111120] border border-[#1e1e38] text-[#5566cc]">
+            <div class="dot-live" style="width:5px;height:5px"></div>
+            ${escHtml(modelCfg.label || aiMsg.model)}
+          </span>
+        </div>
+        <div class="msg-ai px-4 py-3 text-sm text-[#b8b8d8]">
+          <span id="stream-content" class="typing-cursor"></span>
+        </div>`;
+      container.appendChild(div);
+      scrollToBottom(true);
     }
-  } catch {}
-}
 
-// ── CONVERSATION MANAGEMENT ────────────────────────────
-function newChat() {
-  const id = 'c_' + Date.now();
-  const sysPrompt = document.getElementById('globalSystemPrompt').value.trim();
-  convs.unshift({ id, title: 'Nouveau chat', messages: [], systemPrompt: sysPrompt, created: Date.now() });
-  saveState();
-  activeId = id;
-  renderConvList();
-  renderMessages();
-  document.getElementById('userInput').focus();
-  closeSidebar();
-}
+    window.stopStreaming = function() {
+      if (abortCtrl) { abortCtrl.abort(); }
+    };
 
-function loadConv(id) {
-  activeId = id;
-  renderConvList();
-  renderMessages();
-  closeSidebar();
-  setTimeout(() => scrollToBottom(false), 50);
-}
+    // ── SCROLL ─────────────────────────────────────────────
+    const messagesArea = document.getElementById('messagesArea');
+    window.scrollToBottom = function(smooth = true) {
+      messagesArea.scrollTo({ top: messagesArea.scrollHeight, behavior: smooth ? 'smooth' : 'instant' });
+    };
+    messagesArea.addEventListener('scroll', () => {
+      const btn = document.getElementById('scrollBtn');
+      const diff = messagesArea.scrollHeight - messagesArea.scrollTop - messagesArea.clientHeight;
+      btn.classList.toggle('hidden', diff < 180);
+    });
 
-function deleteConv(id, e) {
-  e.stopPropagation();
-  convs = convs.filter(c => c.id !== id);
-  saveState();
-  if (activeId === id) { activeId = convs[0]?.id || null; renderMessages(); }
-  renderConvList();
-}
+    // ── SETTINGS UI ─────────────────────────────────────────
+    window.openSettings = function() {
+      renderKeys();
+      updateKeyIndicator();
+      document.getElementById('settingsModal').classList.add('open');
+    };
+    window.closeSettings = function() { document.getElementById('settingsModal').classList.remove('open'); };
+    document.getElementById('settingsModal').addEventListener('click', function(e) { if (e.target === this) closeSettings(); });
 
-function clearAll() {
-  if (!confirm('Effacer toutes les conversations ?')) return;
-  convs = []; activeId = null; saveState();
-  renderConvList(); renderMessages();
-}
+    window.switchSettingsTab = function(tab) {
+      ['keys','params','system'].forEach(t => {
+        document.getElementById(`panel-${t}`).classList.toggle('hidden', t !== tab);
+        const btn = document.getElementById(`tab-${t}`);
+        btn.className = btn.className.replace('active-tab','').replace('inactive-tab','').trim();
+        btn.className += ' ' + (t === tab ? 'active-tab' : 'inactive-tab');
+      });
+    };
 
-function exportJSON(id, e) {
-  e.stopPropagation();
-  const conv = convs.find(c => c.id === id);
-  if (!conv) return;
-  const blob = new Blob([JSON.stringify(conv, null, 2)], { type: 'application/json' });
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-  a.download = (conv.title || 'chat') + '.json'; a.click();
-  URL.revokeObjectURL(a.href);
-}
+    window.setSafety = function(mode) {
+      safetyMode = mode;
+      document.querySelectorAll('.safety-chip').forEach(el => {
+        const id = el.id.replace('safety-', '');
+        el.className = el.className.replace('active','inactive');
+        if (id === mode) el.className = el.className.replace('inactive','active');
+      });
+    };
 
-function printConv(id, e) {
-  e.stopPropagation();
-  const conv = convs.find(c => c.id === id);
-  if (!conv) return;
-  const w = window.open('', '_blank');
-  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${conv.title}</title>
-  <style>body{font-family:system-ui,sans-serif;max-width:700px;margin:2rem auto;color:#111;line-height:1.6}
-  .u{background:#eef;border-left:3px solid #6366f1;padding:.5rem 1rem;border-radius:4px;margin:1rem 0}
-  .a{background:#f9f9f9;border-left:3px solid #22c55e;padding:.5rem 1rem;border-radius:4px;margin:1rem 0}
-  pre{background:#111;color:#eee;padding:1rem;border-radius:6px;overflow-x:auto;font-size:.8rem}
-  h1{font-size:1.1rem;color:#6366f1}@media print{body{margin:.5cm}}</style></head>
+    window.saveSettings = function() {
+      const model = document.getElementById('defaultModel').value;
+      document.getElementById('modelSelect').value = model;
+      localStorage.setItem('nx_settings', JSON.stringify({
+        model, safetyMode,
+        temperature: document.getElementById('tempSlider').value,
+        topP: document.getElementById('topPSlider').value,
+        topK: document.getElementById('topKSlider').value,
+        maxTokens: document.getElementById('tokensSlider').value,
+        systemPrompt: document.getElementById('globalSystemPrompt').value,
+      }));
+      closeSettings();
+      toast('Paramètres sauvegardés', 'success');
+    };
 
-  <body><h1>${conv.title}</h1><hr>
-  ${conv.messages.map(m=>`<div class="${m.role==='user'?'u':'a'}"><b>${m.role==='user'?'Vous':'Gemini'}:</b><br>${m.role==='user'?escHtml(m.content):m.content.replace(/</g,'&lt;')}</div>`).join('')}
-  </body></html>`;
-  w.document.write(html); w.document.close(); setTimeout(() => w.print(), 400);
-}
+    function loadSettings() {
+      try {
+        const s = JSON.parse(localStorage.getItem('nx_settings') || '{}');
+        if (s.model) { document.getElementById('modelSelect').value = s.model; document.getElementById('defaultModel').value = s.model; }
+        if (s.temperature) { document.getElementById('tempSlider').value = s.temperature; document.getElementById('tempDisplay').textContent = parseFloat(s.temperature).toFixed(2); }
+        if (s.topP) { document.getElementById('topPSlider').value = s.topP; document.getElementById('topPDisplay').textContent = parseFloat(s.topP).toFixed(2); }
+        if (s.topK) { document.getElementById('topKSlider').value = s.topK; document.getElementById('topKDisplay').textContent = s.topK; }
+        if (s.maxTokens) { document.getElementById('tokensSlider').value = s.maxTokens; document.getElementById('tokensDisplay').textContent = s.maxTokens; }
+        if (s.systemPrompt) document.getElementById('globalSystemPrompt').value = s.systemPrompt;
+        if (s.safetyMode) { safetyMode = s.safetyMode; setSafety(s.safetyMode); }
+      } catch {}
+    }
 
-// ── RENDERING ──────────────────────────────────────────
-function renderConvList() {
-const el = document.getElementById(‘convList’);
-if (convs.length === 0) {
-el.innerHTML = `<p class="text-center text-[.65rem] font-mono text-[#252545] py-6">Pas de conversations</p>`;
-return;
-}
-el.innerHTML = convs.map(c => `<div onclick="loadConv('${c.id}')" class="conv-item rounded-xl px-3 py-2 group flex items-center gap-2 ${c.id === activeId ? 'active' : ''}"> <svg class="flex-shrink-0 text-[#333355] group-hover:text-[#5555aa]" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg> <span class="text-[.72rem] text-[#8888bb] truncate flex-1 leading-tight">${escHtml(c.title)}</span> <div class="opacity-0 group-hover:opacity-100 flex gap-1"> <button onclick="exportJSON('${c.id}', event)" title="Export JSON" class="text-[#333355] hover:text-indigo-400 transition-colors p-0.5"> <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> </button> <button onclick="printConv('${c.id}', event)" title="Export PDF" class="text-[#333355] hover:text-indigo-400 transition-colors p-0.5"> <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> </button> <button onclick="deleteConv('${c.id}', event)" class="text-[#333355] hover:text-red-400 transition-colors p-0.5"> <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg> </button> </div> </div>`).join(’’);
-}
+    // ── SIDEBAR ─────────────────────────────────────────────
+    window.toggleSidebar = function() {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('overlay').classList.toggle('active');
+    };
+    window.closeSidebar = function() {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('overlay').classList.remove('active');
+    };
 
-function renderMessages() {
-const conv = convs.find(c => c.id === activeId);
-const container = document.getElementById(‘messages’);
-document.getElementById(‘headerTitle’).textContent = conv?.title || ‘Nouveau chat’;
+    // ── INPUT UTILS ─────────────────────────────────────────
+    window.autoResize = function(el) {
+      el.style.height = 'auto';
+      el.style.height = Math.min(el.scrollHeight, 144) + 'px';
+    };
+    window.handleKey = function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    };
 
-if (!conv || conv.messages.length === 0) {
-container.innerHTML = ` <div class="flex flex-col items-center justify-center py-20 text-center slide-up"> <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] flex items-center justify-center mb-4 shadow-lg" style="box-shadow:0 8px 32px rgba(99,102,241,.3)"> <svg width="28" height="28" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg> </div> <h2 class="text-lg font-800 text-white mb-2">NEXUS PRO</h2> <p class="text-xs text-[#444466] max-w-xs leading-relaxed">Propulsé par Google Gemini API v1. ${keyCache.length === 0 ? '<br><button onclick="openSettings()" style="color:#a5b4fc;text-decoration:underline;background:none;border:none;cursor:pointer;font-size:inherit">Configure ta clé API →</button>' : keyCache.length + ' clé(s) active(s)'}</p> </div>`;
-return;
-}
+    // Global shortcuts
+    document.addEventListener('keydown', e => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'n') { e.preventDefault(); newChat(); }
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); document.getElementById('userInput').focus(); }
+      if (e.key === 'Escape') { closeSettings(); closeSidebar(); }
+    });
 
-container.innerHTML = conv.messages.map((m, i) => buildMessageHTML(m, i)).join(’’);
-postProcessMessages(container);
-scrollToBottom(false);
-}
+    // ── TOAST ───────────────────────────────────────────────
+    window.toast = function(msg, type = 'info') {
+      const el = document.createElement('div');
+      el.className = `toast ${type}`;
+      el.textContent = msg;
+      document.getElementById('toastContainer').appendChild(el);
+      setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .3s'; setTimeout(() => el.remove(), 300); }, 2500);
+    };
 
-function buildMessageHTML(m, i) {
-if (m.role === ‘user’) {
-return `<div class="slide-up flex justify-end"> <div class="msg-user px-4 py-3 max-w-[82%]"> <p class="text-sm text-[#e2e2f0] leading-relaxed whitespace-pre-wrap">${escHtml(m.content)}</p> </div> </div>`;
-}
-const modelCfg = MODELS[m.model] || {};
-return `<div class="slide-up">
-<div class="flex items-center gap-2 mb-1.5">
-<span class="tag bg-[#111120] border border-[#1e1e38] text-[#5566cc]">
-<div style="width:5px;height:5px;border-radius:50%;background:#6366f1;flex-shrink:0"></div>
-${escHtml(modelCfg.label || m.model || ‘Gemini’)}
-</span>
-<button onclick="copyMsg(${i})" class="ml-auto text-[.65rem] font-mono text-[#333355] hover:text-indigo-400 transition-colors px-2 py-1 rounded hover:bg-[#111120] opacity-0 group-hover-msg-${i}" id="copybtn-${i}">
-<svg style="display:inline;width:10px;height:10px;margin-right:3px" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copier
-</button>
-</div>
-<div class="msg-ai px-4 py-3 text-sm text-[#b8b8d8] group" onmouseenter="showCopyBtn(${i})" onmouseleave="hideCopyBtn(${i})">
-${parseMarkdown(m.content)}
-</div>
+    // ── UTILS ────────────────────────────────────────────────
+    function escHtml(s) {
+      return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
 
-  </div>`;
-}
+    // ── MARKED CONFIG ────────────────────────────────────────
+    const renderer = new marked.Renderer();
+    renderer.code = (code, lang) => {
+      const l = lang || 'plaintext';
+      const safe = code.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      return `<div class="code-wrap"><div class="code-header"><span class="code-lang-badge">${escHtml(l)}</span><button class="copy-code-btn" onclick="copyCodeBlock(this)">Copier</button></div><pre class="language-${escHtml(l)}"><code class="language-${escHtml(l)}">${safe}</code></pre></div>`;
+    };
+    marked.setOptions({ renderer, breaks: true, gfm: true });
 
-function parseMarkdown(text) {
-try {
-return marked.parse(text || ‘’, { breaks: true, gfm: true });
-} catch { return escHtml(text || ‘’); }
-}
+    // ── INIT ─────────────────────────────────────────────────
+    async function init() {
+      loadState();
+      loadSettings();
+      await decryptAllKeys();
+      updateKeyIndicator();
+      renderConvList();
 
-function postProcessMessages(container) {
-// Code blocks: wrap with header + copy button
-container.querySelectorAll(‘pre code’).forEach(codeEl => {
-const pre = codeEl.parentElement;
-if (pre.parentElement?.classList.contains(‘code-wrap’)) return;
+      if (convs.length > 0) {
+        activeId = convs[0].id;
+        renderMessages();
+      } else {
+        renderMessages();
+      }
 
-```
-const lang = [...codeEl.classList].find(c => c.startsWith('language-'))?.replace('language-', '') || 'code';
-const wrap = document.createElement('div');
-wrap.className = 'code-wrap';
-const header = document.createElement('div');
-header.className = 'code-header';
-header.innerHTML = `<span class="code-lang-badge">${escHtml(lang)}</span>
-  <button class="copy-code-btn" onclick="copyCodeBlock(this)">Copier</button>`;
+      if (keyCache.length === 0) {
+        setTimeout(openSettings, 600);
+      }
+    }
 
-pre.parentNode.insertBefore(wrap, pre);
-wrap.appendChild(header);
-wrap.appendChild(pre);
-
-// Prism highlight
-if (lang !== 'code' && Prism.languages[lang]) {
-  try { codeEl.innerHTML = Prism.highlight(codeEl.textContent, Prism.languages[lang], lang); } catch {}
-}
-```
-
-});
-
-// KaTeX rendering
-try {
-renderMathInElement(container, {
-delimiters: [
-{ left: ‘$$’, right: ‘$$’, display: true },
-{ left: ‘$’, right: ‘$’, display: false },
-{ left: ‘\[’, right: ‘\]’, display: true },
-{ left: ‘\(’, right: ‘\)’, display: false },
-],
-throwOnError: false,
-});
-} catch {}
-}
-
-function copyCodeBlock(btn) {
-const code = btn.closest(’.code-wrap’).querySelector(‘code’)?.textContent || ‘’;
-navigator.clipboard.writeText(code).then(() => {
-btn.textContent = ‘✓ Copié’;
-setTimeout(() => btn.textContent = ‘Copier’, 2000);
-});
-}
-
-function copyMsg(i) {
-const conv = convs.find(c => c.id === activeId);
-if (!conv) return;
-navigator.clipboard.writeText(conv.messages[i]?.content || ‘’).then(() => toast(‘Message copié’, ‘success’));
-}
-
-function showCopyBtn(i) { document.getElementById(`copybtn-${i}`)?.style.setProperty(‘opacity’, ‘1’); }
-function hideCopyBtn(i) { document.getElementById(`copybtn-${i}`)?.style.setProperty(‘opacity’, ‘0’); }
-
-// ── SEND & STREAM ──────────────────────────────────────
-async function sendMessage() {
-if (isStreaming) return;
-const inp = document.getElementById(‘userInput’);
-const text = inp.value.trim();
-if (!text) return;
-
-// Ensure conv exists
-if (!activeId) newChat();
-const conv = convs.find(c => c.id === activeId);
-if (!conv) return;
-
-inp.value = ‘’; autoResize(inp);
-
-conv.messages.push({ role: ‘user’, content: text });
-const isFirst = conv.messages.length === 1;
-if (isFirst) { conv.title = text.slice(0, 45) + (text.length > 45 ? ‘…’ : ‘’); }
-saveState(); renderConvList();
-
-const modelId = document.getElementById(‘modelSelect’).value;
-const aiMsg = { role: ‘model’, content: ‘’, model: modelId };
-conv.messages.push(aiMsg);
-saveState();
-
-renderMessages();
-addStreamingPlaceholder(aiMsg);
-
-isStreaming = true;
-abortCtrl = new AbortController();
-document.getElementById(‘sendBtn’).disabled = true;
-document.getElementById(‘stopBar’).classList.remove(‘hidden’);
-
-const streamEl = document.getElementById(‘stream-content’);
-
-try {
-await callGeminiStream(
-conv.messages.slice(0, -1), // exclude empty AI msg
-conv.systemPrompt || ‘’,
-(token) => {
-aiMsg.content += token;
-if (streamEl) {
-streamEl.innerHTML = parseMarkdown(aiMsg.content);
-streamEl.className = ‘typing-cursor’;
-}
-scrollToBottom(false);
-},
-abortCtrl.signal
-);
-} catch (e) {
-if (e.name !== ‘AbortError’) {
-aiMsg.content = `**Erreur :** ${e.message}`;
-}
-}
-
-isStreaming = false;
-document.getElementById(‘sendBtn’).disabled = false;
-document.getElementById(‘stopBar’).classList.add(‘hidden’);
-abortCtrl = null;
-saveState();
-renderMessages();
-
-if (isFirst) setTimeout(() => autoRename(activeId), 1000);
-}
-
-function addStreamingPlaceholder(aiMsg) {
-const container = document.getElementById(‘messages’);
-// Remove empty state
-const empty = container.querySelector(’[class*=“py-20”]’);
-if (empty) empty.parentElement ? container.innerHTML = ‘’ : null;
-
-const modelCfg = MODELS[aiMsg.model] || {};
-const div = document.createElement(‘div’);
-div.id = ‘streaming-wrapper’;
-div.className = ‘slide-up’;
-div.innerHTML = ` <div class="flex items-center gap-2 mb-1.5"> <span class="tag bg-[#111120] border border-[#1e1e38] text-[#5566cc]"> <div class="dot-live" style="width:5px;height:5px"></div> ${escHtml(modelCfg.label || aiMsg.model)} </span> </div> <div class="msg-ai px-4 py-3 text-sm text-[#b8b8d8]"> <span id="stream-content" class="typing-cursor"></span> </div>`;
-container.appendChild(div);
-scrollToBottom(true);
-}
-
-function stopStreaming() {
-if (abortCtrl) { abortCtrl.abort(); }
-}
-
-// ── SCROLL ─────────────────────────────────────────────
-const messagesArea = document.getElementById(‘messagesArea’);
-
-function scrollToBottom(smooth = true) {
-messagesArea.scrollTo({ top: messagesArea.scrollHeight, behavior: smooth ? ‘smooth’ : ‘instant’ });
-}
-
-messagesArea.addEventListener(‘scroll’, () => {
-const btn = document.getElementById(‘scrollBtn’);
-const diff = messagesArea.scrollHeight - messagesArea.scrollTop - messagesArea.clientHeight;
-btn.classList.toggle(‘hidden’, diff < 180);
-});
-
-// ── SETTINGS UI ─────────────────────────────────────────
-function openSettings() {
-renderKeys();
-updateKeyIndicator();
-document.getElementById(‘settingsModal’).classList.add(‘open’);
-}
-function closeSettings() { document.getElementById(‘settingsModal’).classList.remove(‘open’); }
-
-document.getElementById(‘settingsModal’).addEventListener(‘click’, function(e) { if (e.target === this) closeSettings(); });
-
-function switchSettingsTab(tab) {
-[‘keys’,‘params’,‘system’].forEach(t => {
-document.getElementById(`panel-${t}`).classList.toggle(‘hidden’, t !== tab);
-const btn = document.getElementById(`tab-${t}`);
-btn.className = btn.className.replace(‘active-tab’,’’).replace(‘inactive-tab’,’’).trim();
-btn.className += ’ ’ + (t === tab ? ‘active-tab’ : ‘inactive-tab’);
-});
-}
-
-function setSafety(mode) {
-safetyMode = mode;
-document.querySelectorAll(’.safety-chip’).forEach(el => {
-const id = el.id.replace(‘safety-’, ‘’);
-el.className = el.className.replace(‘active’,‘inactive’);
-if (id === mode) el.className = el.className.replace(‘inactive’,‘active’);
-});
-}
-
-function saveSettings() {
-const model = document.getElementById(‘defaultModel’).value;
-document.getElementById(‘modelSelect’).value = model;
-localStorage.setItem(‘nx_settings’, JSON.stringify({
-model, safetyMode,
-temperature: document.getElementById(‘tempSlider’).value,
-topP: document.getElementById(‘topPSlider’).value,
-topK: document.getElementById(‘topKSlider’).value,
-maxTokens: document.getElementById(‘tokensSlider’).value,
-systemPrompt: document.getElementById(‘globalSystemPrompt’).value,
-}));
-closeSettings();
-toast(‘Paramètres sauvegardés’, ‘success’);
-}
-
-function loadSettings() {
-try {
-const s = JSON.parse(localStorage.getItem(‘nx_settings’) || ‘{}’);
-if (s.model) { document.getElementById(‘modelSelect’).value = s.model; document.getElementById(‘defaultModel’).value = s.model; }
-if (s.temperature) { document.getElementById(‘tempSlider’).value = s.temperature; document.getElementById(‘tempDisplay’).textContent = parseFloat(s.temperature).toFixed(2); }
-if (s.topP) { document.getElementById(‘topPSlider’).value = s.topP; document.getElementById(‘topPDisplay’).textContent = parseFloat(s.topP).toFixed(2); }
-if (s.topK) { document.getElementById(‘topKSlider’).value = s.topK; document.getElementById(‘topKDisplay’).textContent = s.topK; }
-if (s.maxTokens) { document.getElementById(‘tokensSlider’).value = s.maxTokens; document.getElementById(‘tokensDisplay’).textContent = s.maxTokens; }
-if (s.systemPrompt) document.getElementById(‘globalSystemPrompt’).value = s.systemPrompt;
-if (s.safetyMode) { safetyMode = s.safetyMode; setSafety(s.safetyMode); }
-} catch {}
-}
-
-// ── SIDEBAR ─────────────────────────────────────────────
-function toggleSidebar() {
-document.getElementById(‘sidebar’).classList.toggle(‘open’);
-document.getElementById(‘overlay’).classList.toggle(‘active’);
-}
-function closeSidebar() {
-document.getElementById(‘sidebar’).classList.remove(‘open’);
-document.getElementById(‘overlay’).classList.remove(‘active’);
-}
-
-// ── INPUT UTILS ─────────────────────────────────────────
-function autoResize(el) {
-el.style.height = ‘auto’;
-el.style.height = Math.min(el.scrollHeight, 144) + ‘px’;
-}
-
-function handleKey(e) {
-if (e.key === ‘Enter’ && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-}
-
-// Global shortcuts
-document.addEventListener(‘keydown’, e => {
-if ((e.metaKey || e.ctrlKey) && e.key === ‘n’) { e.preventDefault(); newChat(); }
-if ((e.metaKey || e.ctrlKey) && e.key === ‘k’) { e.preventDefault(); document.getElementById(‘userInput’).focus(); }
-if (e.key === ‘Escape’) { closeSettings(); closeSidebar(); }
-});
-
-// ── TOAST ───────────────────────────────────────────────
-function toast(msg, type = ‘info’) {
-const el = document.createElement(‘div’);
-el.className = `toast ${type}`;
-el.textContent = msg;
-document.getElementById(‘toastContainer’).appendChild(el);
-setTimeout(() => { el.style.opacity = ‘0’; el.style.transition = ‘opacity .3s’; setTimeout(() => el.remove(), 300); }, 2500);
-}
-
-// ── UTILS ────────────────────────────────────────────────
-function escHtml(s) {
-return String(s || ‘’).replace(/&/g,’&’).replace(/</g,’<’).replace(/>/g,’>’).replace(/”/g,’"’);
-}
-
-// ── MARKED CONFIG ────────────────────────────────────────
-const renderer = new marked.Renderer();
-renderer.code = (code, lang) => {
-const l = lang || ‘plaintext’;
-const safe = code.replace(/</g,’<’).replace(/>/g,’>’);
-return `<div class="code-wrap"><div class="code-header"><span class="code-lang-badge">${escHtml(l)}</span><button class="copy-code-btn" onclick="copyCodeBlock(this)">Copier</button></div><pre class="language-${escHtml(l)}"><code class="language-${escHtml(l)}">${safe}</code></pre></div>`;
-};
-marked.setOptions({ renderer, breaks: true, gfm: true });
-
-// ── INIT ─────────────────────────────────────────────────
-async function init() {
-loadState();
-loadSettings();
-await decryptAllKeys();
-updateKeyIndicator();
-renderConvList();
-
-if (convs.length > 0) {
-activeId = convs[0].id;
-renderMessages();
-} else {
-renderMessages();
-}
-
-if (keyCache.length === 0) {
-setTimeout(openSettings, 600);
-}
-}
-
-init();
+    init();
+  })();
 </script>
-
 </body>
 </html>
