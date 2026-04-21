@@ -1,972 +1,1051 @@
 <!DOCTYPE html>
 
-<html lang="fr" class="dark">
+<html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover,maximum-scale=1">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>NEXUS PRO · Gemini</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/marked@9/marked.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
-  <script>tailwind.config={darkMode:'class',theme:{extend:{fontFamily:{sans:['Inter','sans-serif'],mono:['JetBrains Mono','monospace']}}}}</script>
-  <style>
-    :root { --app-height: 100dvh; }
-    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-    html,body{height:var(--app-height,100dvh);overflow:hidden}
-    body{font-family:'Inter',sans-serif;background:#080810;color:#e2e2f0}
-    ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#252535;border-radius:4px}
-    .glass{background:rgba(12,12,22,0.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
-    .sidebar-bg{background:#0c0c18;border-right:1px solid #1a1a2e}
-    .glow-focus:focus-within{box-shadow:0 0 0 1.5px rgba(99,102,241,.5),0 0 24px rgba(99,102,241,.12)}
-    .glow-focus{box-shadow:0 0 0 1px #1e1e32;transition:box-shadow .2s}
-    .btn-send{background:linear-gradient(135deg,#6366f1,#8b5cf6);transition:all .2s;flex-shrink:0}
-    .btn-send:hover{box-shadow:0 0 20px rgba(99,102,241,.45);transform:translateY(-1px) scale(1.04)}
-    .btn-send:active{transform:scale(.96)}
-    .btn-send:disabled{opacity:.35;transform:none;box-shadow:none}
-    .conv-item{border:1px solid transparent;transition:all .15s;cursor:pointer}
-    .conv-item:hover{background:#12122a;border-color:#1e1e38}
-    .conv-item.active{background:#14142e;border-color:rgba(99,102,241,.45)}
-    .msg-user{background:linear-gradient(135deg,rgba(99,102,241,.18),rgba(139,92,246,.12));border:1px solid rgba(99,102,241,.25);border-radius:18px 18px 4px 18px}
-    .msg-ai{background:#111120;border:1px solid #1a1a2e;border-radius:18px 18px 18px 4px}
-    .msg-ai p{margin:.4rem 0;line-height:1.75}
-    .msg-ai h1,.msg-ai h2,.msg-ai h3{font-weight:700;margin:.9rem 0 .4rem;color:#f0f0ff}
-    .msg-ai h1{font-size:1.2rem}.msg-ai h2{font-size:1.05rem}.msg-ai h3{font-size:.95rem}
-    .msg-ai ul,.msg-ai ol{padding-left:1.4rem;margin:.4rem 0}
-    .msg-ai li{margin:.2rem 0;line-height:1.7}
-    .msg-ai strong{color:#f0f0ff;font-weight:600}
-    .msg-ai em{color:#c4b5fd}
-    .msg-ai a{color:#818cf8;text-decoration:underline}
-    .msg-ai table{border-collapse:collapse;width:100%;margin:.6rem 0;font-size:.82rem}
-    .msg-ai th{background:#1a1a30;padding:.5rem .7rem;text-align:left;border:1px solid #252540;color:#e2e2f0;font-weight:600}
-    .msg-ai td{padding:.4rem .7rem;border:1px solid #1e1e38;color:#b0b0d0}
-    .msg-ai tr:nth-child(even) td{background:#12121e}
-    .msg-ai blockquote{border-left:3px solid #6366f1;margin:.5rem 0;padding:.3rem .8rem;color:#8888aa;font-style:italic}
-    .code-wrap{position:relative;margin:.7rem 0;border-radius:12px;overflow:hidden;border:1px solid #1e1e38}
-    .code-header{display:flex;align-items:center;justify-content:space-between;background:#0e0e1e;padding:.4rem .8rem;border-bottom:1px solid #1e1e38}
-    .code-lang-badge{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:#6366f1;text-transform:uppercase;letter-spacing:.08em}
-    .copy-code-btn{font-size:.65rem;font-family:'JetBrains Mono',monospace;color:#5555aa;background:#1a1a2e;border:1px solid #252540;border-radius:6px;padding:.2rem .55rem;cursor:pointer;transition:all .15s}
-    .copy-code-btn:hover{color:#a5b4fc;border-color:#6366f1}
-    .msg-ai pre{background:#090916!important;padding:.9rem 1rem!important;margin:0!important;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.78rem;line-height:1.6}
-    .msg-ai code:not(pre code){background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.22);border-radius:4px;padding:1px 5px;font-family:'JetBrains Mono',monospace;font-size:.83em;color:#a5b4fc}
-    .typing-cursor::after{content:'▊';animation:blink .65s step-start infinite;color:#6366f1;font-size:.85em}
-    @keyframes blink{50%{opacity:0}}
-    .slide-up{animation:slideUp .22s cubic-bezier(.34,1.56,.64,1)}
-    @keyframes slideUp{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
-    .spin{animation:spin 1s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    .dot-live{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px rgba(34,197,94,.6);animation:livePulse 2s ease infinite;flex-shrink:0}
-    @keyframes livePulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.6);opacity:.5}}
-    .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(6px);z-index:999;align-items:center;justify-content:center}
-    .modal-bg.open{display:flex}
-    .modal-box{background:#0e0e1c;border:1px solid #1e1e38;border-radius:20px;padding:1.5rem;width:calc(100% - 2rem);max-width:480px;max-height:85dvh;overflow-y:auto;position:relative}
-    .modal-box::-webkit-scrollbar{display:none}
-    .key-card{background:#0a0a18;border:1px solid #1e1e38;border-radius:12px;padding:.75rem 1rem;transition:border-color .15s}
-    .key-card.ok{border-color:rgba(34,197,94,.35)}
-    .key-card.err{border-color:rgba(239,68,68,.35)}
-    .key-card.testing{border-color:rgba(99,102,241,.35)}
-    .range-sl{-webkit-appearance:none;appearance:none;height:3px;border-radius:2px;background:#1e1e38;outline:none;width:100%;cursor:pointer}
-    .range-sl::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#6366f1;box-shadow:0 0 8px rgba(99,102,241,.4);cursor:pointer}
-    .tag{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:.62rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
-    .toast-container{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;align-items:center;gap:.5rem;pointer-events:none}
-    .toast{padding:.45rem 1rem;border-radius:12px;font-size:.75rem;font-weight:600;font-family:'JetBrains Mono',monospace;animation:slideUp .2s ease;pointer-events:none;white-space:nowrap}
-    .toast.success{background:#0f2a1a;border:1px solid rgba(34,197,94,.3);color:#4ade80}
-    .toast.error{background:#2a0f0f;border:1px solid rgba(239,68,68,.3);color:#f87171}
-    .toast.info{background:#14142e;border:1px solid rgba(99,102,241,.3);color:#a5b4fc}
-    /* SCROLL BTN - fixed positioning inside messages area */
-    #scrollBtn{position:fixed;bottom:calc(var(--input-h,100px) + 12px);right:1.2rem;z-index:50;width:36px;height:36px;border-radius:50%;background:#14142e;border:1px solid #252550;color:#6366f1;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(0,0,0,.5)}
-    #scrollBtn:hover{background:#1e1e3e;border-color:#6366f1;box-shadow:0 0 14px rgba(99,102,241,.3)}
-    @media(max-width:768px){
-      #sidebar{position:fixed;left:-270px;top:0;bottom:0;z-index:500;width:270px;transition:left .28s cubic-bezier(.4,0,.2,1)}
-      #sidebar.open{left:0}
-      #overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:499}
-      #overlay.active{display:block}
-    }
-    textarea:focus{outline:none}
-    .export-btn{background:#0e0e1e;border:1px solid #1e1e38;border-radius:8px;padding:.35rem .7rem;font-size:.72rem;color:#8888aa;cursor:pointer;transition:all .15s;font-family:'JetBrains Mono',monospace}
-    .export-btn:hover{border-color:#6366f1;color:#a5b4fc}
-    .stop-btn{background:#2a0f0f;border:1px solid rgba(239,68,68,.4);color:#f87171;border-radius:10px;padding:.35rem .75rem;font-size:.72rem;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:.35rem;font-weight:600}
-    .stop-btn:hover{background:#3a1010;box-shadow:0 0 10px rgba(239,68,68,.2)}
-    .safety-chip{padding:.25rem .6rem;border-radius:8px;font-size:.65rem;font-family:'JetBrains Mono',monospace;font-weight:600;cursor:pointer;border:1px solid transparent;transition:all .15s}
-    .safety-chip.active{background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.4);color:#f87171}
-    .safety-chip.inactive{background:#0e0e1e;border-color:#1e1e38;color:#5555aa}
-    /* Input area - safe area inset */
-    #inputArea{padding-bottom:max(1rem, env(safe-area-inset-bottom))}
-    .settings-label{font-size:.7rem;font-weight:700;color:#6666aa;text-transform:uppercase;letter-spacing:.07em}
-    .active-tab{background:#14142e;color:#a5b4fc}
-    .inactive-tab{color:#444466}
-    .inactive-tab:hover{color:#8888cc}
-    /* App container */
-    #appRoot{height:var(--app-height,100dvh);display:flex;overflow:hidden}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover,maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>NEXUS PRO</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked@9/marked.min.js"></script>
+<style>
+:root{--app-h:100dvh}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:var(--app-h);overflow:hidden;background:#080810;color:#e2e2f0;font-family:'Inter',sans-serif}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:#1e1e38;border-radius:4px}
+
+#root{display:flex;height:var(–app-h)}
+
+/* Sidebar */
+#sb{width:260px;flex-shrink:0;background:#0b0b18;border-right:1px solid #15152a;display:flex;flex-direction:column;height:var(–app-h);transition:transform .28s cubic-bezier(.4,0,.2,1)}
+@media(max-width:768px){
+#sb{position:fixed;left:0;top:0;bottom:0;z-index:400;transform:translateX(-100%)}
+#sb.open{transform:translateX(0)}
+#ovl{display:block!important}
+}
+#ovl{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:399}
+
+/* Main */
+#main{flex:1;display:flex;flex-direction:column;min-width:0;height:var(–app-h)}
+#topbar{height:50px;min-height:50px;flex-shrink:0;display:flex;align-items:center;gap:10px;padding:0 12px;background:#0b0b18;border-bottom:1px solid #15152a}
+#msgs-wrap{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+#msgs{max-width:680px;margin:0 auto;padding:20px 14px 8px;display:flex;flex-direction:column;gap:14px}
+#bottom{flex-shrink:0;background:#0b0b18;border-top:1px solid #15152a;padding:10px 14px;padding-bottom:max(10px,env(safe-area-inset-bottom))}
+#input-inner{max-width:680px;margin:0 auto}
+#input-box{display:flex;align-items:flex-end;gap:8px;background:#111122;border:1px solid #1e1e38;border-radius:16px;padding:7px 8px 7px 14px;transition:border-color .2s}
+#input-box:focus-within{border-color:rgba(99,102,241,.6);box-shadow:0 0 0 1px rgba(99,102,241,.2)}
+#inp{flex:1;background:transparent;border:none;outline:none;color:#e2e2f0;font-size:15px;line-height:1.5;resize:none;font-family:‘Inter’,sans-serif;max-height:130px;overflow-y:auto}
+#inp::placeholder{color:#333355}
+#send{width:36px;height:36px;border-radius:10px;flex-shrink:0;background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+#send:hover{box-shadow:0 0 18px rgba(99,102,241,.45);transform:scale(1.05)}
+#send:active{transform:scale(.95)}
+#send:disabled{opacity:.3;transform:none;box-shadow:none;cursor:not-allowed}
+
+/* Messages */
+.mu{align-self:flex-end;background:linear-gradient(135deg,rgba(99,102,241,.18),rgba(139,92,246,.12));border:1px solid rgba(99,102,241,.25);border-radius:18px 18px 4px 18px;padding:10px 14px;max-width:82%;font-size:14px;line-height:1.65;white-space:pre-wrap;word-break:break-word}
+.ma{background:#111122;border:1px solid #1a1a30;border-radius:4px 18px 18px 18px;padding:12px 14px;font-size:14px;line-height:1.7;word-break:break-word;color:#c0c0e0}
+.ma p{margin:.35rem 0}.ma p:last-child{margin-bottom:0}
+.ma h1,.ma h2,.ma h3{font-weight:700;color:#f0f0ff;margin:.8rem 0 .35rem}
+.ma h1{font-size:1.15rem}.ma h2{font-size:1rem}.ma h3{font-size:.9rem}
+.ma ul,.ma ol{padding-left:1.3rem;margin:.35rem 0}
+.ma li{margin:.2rem 0}
+.ma strong{color:#f0f0ff;font-weight:600}
+.ma em{color:#c4b5fd}
+.ma a{color:#818cf8;text-decoration:underline}
+.ma blockquote{border-left:3px solid #6366f1;padding:.25rem .75rem;color:#8888aa;font-style:italic;margin:.4rem 0}
+.ma table{border-collapse:collapse;width:100%;margin:.5rem 0;font-size:.8rem}
+.ma th{background:#1a1a30;padding:.4rem .6rem;border:1px solid #252545;color:#e0e0ff;font-weight:600;text-align:left}
+.ma td{padding:.35rem .6rem;border:1px solid #1c1c38;color:#a8a8c8}
+.ma tr:nth-child(even) td{background:#0f0f20}
+
+/* Code blocks */
+.cw{border-radius:10px;overflow:hidden;border:1px solid #1e1e38;margin:.6rem 0}
+.ch{display:flex;align-items:center;justify-content:space-between;background:#0d0d1e;padding:.35rem .75rem;border-bottom:1px solid #1e1e38}
+.cl{font-family:‘JetBrains Mono’,monospace;font-size:.6rem;color:#6366f1;text-transform:uppercase;letter-spacing:.08em}
+.cb{font-size:.6rem;font-family:‘JetBrains Mono’,monospace;color:#444488;background:#1a1a2e;border:1px solid #252545;border-radius:5px;padding:.15rem .5rem;cursor:pointer;transition:all .15s}
+.cb:hover{color:#a5b4fc;border-color:#6366f1}
+.ma pre{background:#08080f!important;padding:.8rem 1rem!important;margin:0!important;overflow-x:auto;font-family:‘JetBrains Mono’,monospace;font-size:.77rem;line-height:1.6}
+.ma code:not(pre code){background:rgba(99,102,241,.14);border:1px solid rgba(99,102,241,.2);border-radius:4px;padding:1px 5px;font-family:‘JetBrains Mono’,monospace;font-size:.82em;color:#a5b4fc}
+
+/* Streaming cursor */
+.cur::after{content:‘▋’;animation:blink .65s step-start infinite;color:#6366f1}
+@keyframes blink{50%{opacity:0}}
+
+/* Animations */
+.su{animation:su .2s cubic-bezier(.34,1.56,.64,1)}
+@keyframes su{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+/* Dots */
+.dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.dot-g{background:#22c55e;box-shadow:0 0 7px rgba(34,197,94,.5);animation:dp 2s ease infinite}
+.dot-i{background:#6366f1;animation:dp 2s ease infinite}
+@keyframes dp{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.55);opacity:.4}}
+
+/* Buttons */
+.ib{width:34px;height:34px;border-radius:8px;border:none;background:transparent;color:#555580;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.ib:hover{background:#1a1a2e;color:#e2e2f0}
+.ib svg{width:16px;height:16px}
+
+/* Conv item */
+.ci{display:flex;align-items:center;gap:7px;padding:7px 10px;border-radius:9px;cursor:pointer;border:1px solid transparent;transition:all .12s;font-size:12px;color:#8888bb}
+.ci:hover{background:#12122a;border-color:#1e1e38}
+.ci.act{background:#14142c;border-color:rgba(99,102,241,.4);color:#e2e2f0}
+.ci .dx{margin-left:auto;display:flex;gap:4px;opacity:0;transition:opacity .12s}
+.ci:hover .dx{opacity:1}
+.ci .dx button{background:none;border:none;color:#444466;cursor:pointer;padding:2px;border-radius:4px;transition:color .12s;display:flex}
+.ci .dx button:hover{color:#f87171}
+
+/* Badge */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:.6rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-family:‘JetBrains Mono’,monospace;background:#111122;border:1px solid #1e1e38;color:#5566cc}
+
+/* Modal */
+.mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);z-index:999;align-items:center;justify-content:center;padding:0 14px}
+.mbg.open{display:flex}
+.mbox{background:#0d0d1c;border:1px solid #1e1e38;border-radius:18px;padding:20px;width:100%;max-width:460px;max-height:88dvh;overflow-y:auto}
+.mbox::-webkit-scrollbar{display:none}
+
+/* Form elements */
+.fi{width:100%;background:#0a0a18;border:1px solid #1e1e38;border-radius:10px;padding:8px 12px;color:#e2e2f0;font-size:12px;outline:none;transition:border-color .2s;font-family:‘Inter’,sans-serif}
+.fi:focus{border-color:#6366f1}
+.fsel{width:100%;background:#0a0a18;border:1px solid #1e1e38;border-radius:10px;padding:8px 12px;color:#e2e2f0;font-size:12px;outline:none;cursor:pointer}
+.fl{font-size:.65rem;font-weight:700;color:#555580;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:5px}
+.sl{-webkit-appearance:none;appearance:none;height:3px;border-radius:2px;background:#1e1e38;outline:none;width:100%;cursor:pointer}
+.sl::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#6366f1;box-shadow:0 0 8px rgba(99,102,241,.4);cursor:pointer}
+
+/* Tabs */
+.tb{flex:1;padding:7px 4px;border-radius:8px;font-size:.7rem;font-weight:700;border:none;cursor:pointer;transition:all .15s;font-family:‘Inter’,sans-serif}
+.tb.on{background:#1e1e38;color:#e2e2f0}
+.tb.off{background:transparent;color:#444466}
+.tb.off:hover{color:#8888cc}
+
+/* Key card */
+.kc{background:#0a0a18;border:1px solid #1e1e38;border-radius:10px;padding:10px 12px;transition:border-color .15s}
+.kc.ok{border-color:rgba(34,197,94,.3)}
+.kc.err{border-color:rgba(239,68,68,.3)}
+.kc.or{border-color:rgba(251,146,60,.3)}
+
+/* Provider badge */
+.prov-g{background:rgba(99,102,241,.12);color:#a5b4fc;border:1px solid rgba(99,102,241,.25);border-radius:6px;padding:1px 6px;font-size:.58rem;font-family:‘JetBrains Mono’,monospace;font-weight:600;text-transform:uppercase}
+.prov-or{background:rgba(251,146,60,.12);color:#fb923c;border:1px solid rgba(251,146,60,.25);border-radius:6px;padding:1px 6px;font-size:.58rem;font-family:‘JetBrains Mono’,monospace;font-weight:600;text-transform:uppercase}
+
+/* Toast */
+#toasts{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;align-items:center;gap:6px;pointer-events:none}
+.t{padding:7px 14px;border-radius:12px;font-size:.72rem;font-weight:600;font-family:‘JetBrains Mono’,monospace;animation:su .2s ease;white-space:nowrap;pointer-events:none}
+.t.s{background:#0f2a1a;border:1px solid rgba(34,197,94,.3);color:#4ade80}
+.t.e{background:#2a0f0f;border:1px solid rgba(239,68,68,.3);color:#f87171}
+.t.i{background:#14142e;border:1px solid rgba(99,102,241,.3);color:#a5b4fc}
+
+/* Stop bar */
+#stopbar{display:none;justify-content:center;padding:6px;flex-shrink:0}
+.stopbtn{background:#2a0f0f;border:1px solid rgba(239,68,68,.35);color:#f87171;border-radius:9px;padding:5px 12px;font-size:.72rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:‘Inter’,sans-serif;transition:all .15s}
+.stopbtn:hover{background:#3a1010}
+
+/* Scroll btn */
+#scrollbtn{position:fixed;right:1rem;z-index:50;width:34px;height:34px;border-radius:50%;background:#14142e;border:1px solid #25254a;color:#6366f1;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;box-shadow:0 4px 14px rgba(0,0,0,.5)}
+#scrollbtn:hover{border-color:#6366f1;box-shadow:0 0 14px rgba(99,102,241,.3)}
+textarea:focus{outline:none}
+</style>
+
 </head>
 <body>
 
-<div class="toast-container" id="toastContainer"></div>
-<div id="overlay" onclick="closeSidebar()"></div>
+<div id="toasts"></div>
+<div id="ovl" onclick="closeSB()"></div>
 
-<!-- SETTINGS MODAL -->
+<!-- MODAL PARAMÈTRES -->
 
-<div class="modal-bg" id="settingsModal">
-  <div class="modal-box slide-up" onclick="event.stopPropagation()">
-    <div class="flex items-center justify-between mb-5">
-      <div>
-        <h2 class="text-base font-bold text-white">Paramètres</h2>
-        <p class="text-xs text-[#5555aa] mt-0.5">Clés API · Modèles · Génération</p>
-      </div>
-      <button onclick="closeSettings()" class="w-8 h-8 flex items-center justify-center rounded-lg text-[#5555aa] hover:text-white hover:bg-[#1e1e38] transition-all">
-        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
-      </button>
+<div class="mbg" id="modal">
+<div class="mbox" onclick="event.stopPropagation()">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+    <div>
+      <div style="font-size:15px;font-weight:800;color:#fff">Paramètres</div>
+      <div style="font-size:11px;color:#444466;margin-top:2px">Clés · Modèles · Génération</div>
     </div>
-    <!-- TABS -->
-    <div class="flex gap-1 mb-5 bg-[#0a0a18] rounded-xl p-1">
-      <button onclick="switchSettingsTab('keys')" id="tab-keys" class="flex-1 py-2 rounded-lg text-xs font-bold transition-all active-tab">Clés API</button>
-      <button onclick="switchSettingsTab('params')" id="tab-params" class="flex-1 py-2 rounded-lg text-xs font-bold transition-all inactive-tab">Génération</button>
-      <button onclick="switchSettingsTab('system')" id="tab-system" class="flex-1 py-2 rounded-lg text-xs font-bold transition-all inactive-tab">System</button>
-    </div>
-    <!-- TAB: KEYS -->
-    <div id="panel-keys">
-      <div class="space-y-2 mb-4" id="keysList"></div>
-      <div class="flex gap-2">
-        <input id="newKeyInput" type="password" placeholder="Clé API Gemini (AIza... ou AQ...)" class="flex-1 bg-[#0a0a18] border border-[#1e1e38] rounded-xl px-3 py-2.5 text-xs font-mono text-[#e2e2f0] placeholder-[#303050] focus:border-[#6366f1] outline-none transition-colors">
-        <input id="newKeyLabel" type="text" placeholder="Label" class="w-20 bg-[#0a0a18] border border-[#1e1e38] rounded-xl px-3 py-2.5 text-xs text-[#e2e2f0] placeholder-[#303050] focus:border-[#6366f1] outline-none transition-colors">
-        <button onclick="addKey()" class="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-xs font-bold text-white transition-colors">+</button>
-      </div>
-      <p class="text-[.65rem] text-[#303050] mt-2 font-mono">Clés chiffrées AES-GCM. Supporte AIza... et AQ... (nouveaux formats 2025/2026).</p>
-      <div class="mt-3 p-2.5 bg-[#0a0a18] border border-indigo-900/40 rounded-xl">
-        <p class="text-[.65rem] font-mono text-indigo-400">💡 Les clés <span class="text-white">AQ.</span> sont le nouveau format Google AI Studio. Elles sont envoyées via le header <span class="text-white">x-goog-api-key</span>.</p>
-      </div>
-    </div>
-    <!-- TAB: PARAMS -->
-    <div id="panel-params" class="hidden space-y-5">
-      <div>
-        <label class="settings-label">Modèle par défaut</label>
-        <select id="defaultModel" class="w-full bg-[#0a0a18] border border-[#1e1e38] rounded-xl px-3 py-2.5 text-xs text-[#e2e2f0] outline-none focus:border-[#6366f1] transition-colors mt-1.5">
-          <option value="gemini-2.5-flash-preview-04-17">gemini-2.5-flash ⚡ (recommandé)</option>
-          <option value="gemini-2.5-pro-preview-03-25">gemini-2.5-pro 🧠</option>
-          <option value="gemini-2.0-flash">gemini-2.0-flash ✨</option>
-          <option value="gemini-2.0-flash-lite">gemini-2.0-flash-lite 🔥</option>
-        </select>
-      </div>
-      <div>
-        <div class="flex justify-between">
-          <label class="settings-label">Température</label>
-          <span class="text-xs font-mono text-[#6366f1]" id="tempDisplay">0.70</span>
-        </div>
-        <input type="range" id="tempSlider" min="0" max="2" step="0.01" value="0.7" class="range-sl mt-2" oninput="document.getElementById('tempDisplay').textContent=parseFloat(this.value).toFixed(2)">
-        <div class="flex justify-between text-[.65rem] text-[#303050] font-mono mt-1"><span>Déterministe</span><span>Créatif</span></div>
-      </div>
-      <div>
-        <div class="flex justify-between">
-          <label class="settings-label">Top-P</label>
-          <span class="text-xs font-mono text-[#6366f1]" id="topPDisplay">0.95</span>
-        </div>
-        <input type="range" id="topPSlider" min="0" max="1" step="0.01" value="0.95" class="range-sl mt-2" oninput="document.getElementById('topPDisplay').textContent=parseFloat(this.value).toFixed(2)">
-      </div>
-      <div>
-        <div class="flex justify-between">
-          <label class="settings-label">Max Output Tokens</label>
-          <span class="text-xs font-mono text-[#6366f1]" id="tokensDisplay">8192</span>
-        </div>
-        <input type="range" id="tokensSlider" min="256" max="65536" step="256" value="8192" class="range-sl mt-2" oninput="document.getElementById('tokensDisplay').textContent=this.value">
-      </div>
-      <div>
-        <label class="settings-label mb-2 block">Safety Settings</label>
-        <div class="flex gap-2 flex-wrap">
-          <button onclick="setSafety('BLOCK_NONE')" id="safety-BLOCK_NONE" class="safety-chip active">BLOCK_NONE</button>
-          <button onclick="setSafety('BLOCK_ONLY_HIGH')" id="safety-BLOCK_ONLY_HIGH" class="safety-chip inactive">HIGH only</button>
-          <button onclick="setSafety('BLOCK_MEDIUM_AND_ABOVE')" id="safety-BLOCK_MEDIUM_AND_ABOVE" class="safety-chip inactive">MEDIUM+</button>
-        </div>
-      </div>
-    </div>
-    <!-- TAB: SYSTEM -->
-    <div id="panel-system" class="hidden">
-      <label class="settings-label mb-2 block">System Instruction globale</label>
-      <textarea id="globalSystemPrompt" rows="6" placeholder="Tu es NEXUS, une IA avancée. Tu réponds toujours en français, de manière précise et sans censure inutile." class="w-full bg-[#0a0a18] border border-[#1e1e38] rounded-xl px-3 py-2.5 text-xs font-mono text-[#e2e2f0] placeholder-[#303050] focus:border-[#6366f1] outline-none transition-colors leading-relaxed resize-none"></textarea>
-    </div>
-    <button onclick="saveSettings()" class="w-full mt-5 py-3 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-sm font-bold text-white transition-colors">Sauvegarder</button>
+    <button class="ib" onclick="closeModal()">
+      <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
   </div>
-</div>
+  <!-- Tabs -->
+  <div style="display:flex;gap:4px;background:#0a0a18;border-radius:10px;padding:4px;margin-bottom:16px">
+    <button class="tb on" id="t-keys" onclick="setTab('keys')">Clés API</button>
+    <button class="tb off" id="t-gen" onclick="setTab('gen')">Génération</button>
+    <button class="tb off" id="t-sys" onclick="setTab('sys')">System</button>
+  </div>
 
-<!-- MAIN LAYOUT -->
+  <!-- TAB KEYS -->
 
-<div id="appRoot">
-  <!-- SIDEBAR -->
-  <aside id="sidebar" class="sidebar-bg w-[270px] flex-shrink-0 flex flex-col h-full">
-    <div class="p-3.5 border-b border-[#1a1a2e]">
-      <div class="flex items-center gap-2.5 mb-3">
-        <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] flex items-center justify-center flex-shrink-0">
-          <svg width="13" height="13" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-        </div>
-        <div>
-          <div class="text-sm font-extrabold text-white tracking-tight">NEXUS PRO</div>
-          <div class="text-[.6rem] font-mono text-[#4444aa] -mt-0.5">Gemini · v1beta API</div>
-        </div>
-        <div class="dot-live ml-auto"></div>
-      </div>
-      <button onclick="newChat()" class="w-full flex items-center justify-center gap-2 py-2 rounded-xl border border-dashed border-[#252540] text-[#5555aa] hover:text-white hover:border-indigo-500 hover:bg-[#12122a] transition-all text-xs font-semibold">
-        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-        Nouveau chat
+  <div id="p-keys">
+    <!-- Provider selector -->
+    <div style="display:flex;gap:6px;margin-bottom:12px">
+      <button onclick="setProvider('gemini')" id="pb-gemini"
+        style="flex:1;padding:8px;border-radius:9px;font-size:.72rem;font-weight:700;border:1px solid rgba(99,102,241,.4);background:rgba(99,102,241,.1);color:#a5b4fc;cursor:pointer;transition:all .15s">
+        🔷 Google Gemini
+      </button>
+      <button onclick="setProvider('openrouter')" id="pb-openrouter"
+        style="flex:1;padding:8px;border-radius:9px;font-size:.72rem;font-weight:700;border:1px solid #1e1e38;background:transparent;color:#555580;cursor:pointer;transition:all .15s">
+        🟠 OpenRouter
       </button>
     </div>
-    <div class="flex-1 overflow-y-auto p-2.5 space-y-0.5" id="convList"></div>
-    <div class="p-2.5 border-t border-[#1a1a2e] space-y-0.5">
-      <button onclick="openSettings()" class="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-[#5555aa] hover:text-white hover:bg-[#14142e] transition-all text-xs font-semibold">
-        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-        Paramètres & Clés API
-      </button>
-      <button onclick="clearAll()" class="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-[#303050] hover:text-red-400 hover:bg-[#14142e] transition-all text-xs font-semibold">
-        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
-        Effacer tout
-      </button>
+    <div id="keys-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px"></div>
+    <div style="display:flex;gap:6px">
+      <input id="ki" type="password" class="fi" placeholder="Clé API (AIza…, AQ…, sk-or-v1-…)" style="flex:1">
+      <input id="kl" type="text" class="fi" placeholder="Label" style="width:80px">
+      <button onclick="addKey()" style="padding:8px 12px;background:#6366f1;border:none;border-radius:9px;color:#fff;font-size:12px;font-weight:700;cursor:pointer">+</button>
     </div>
-  </aside>
+    <p style="font-size:.6rem;color:#252545;margin-top:7px;font-family:'JetBrains Mono',monospace">Clés chiffrées AES-GCM · Jamais envoyées ailleurs que l'API choisie</p>
+  </div>
 
-  <!-- MAIN CHAT -->
+  <!-- TAB GEN -->
 
-  <div class="flex-1 flex flex-col min-w-0" style="height:var(--app-height,100dvh)">
-    <!-- HEADER -->
-    <header class="flex items-center px-3 gap-2.5 glass border-b border-[#1a1a2e] flex-shrink-0" style="height:52px;min-height:52px">
-      <button onclick="toggleSidebar()" class="md:hidden w-8 h-8 flex items-center justify-center rounded-lg text-[#5555aa] hover:text-white hover:bg-[#1e1e38] transition-all flex-shrink-0">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-      </button>
-      <span class="text-sm font-semibold text-[#8888bb] flex-1 truncate min-w-0" id="headerTitle">Nouveau chat</span>
-      <div class="flex items-center gap-2 flex-shrink-0">
-        <div id="keyIndicator" class="hidden items-center gap-1.5 bg-[#111120] border border-[#1e1e38] rounded-lg px-2.5 py-1.5 cursor-pointer hover:border-[#6366f1] transition-colors" onclick="openSettings()">
-          <div class="w-2 h-2 rounded-full bg-green-400 flex-shrink-0"></div>
-          <span class="text-[.65rem] font-mono text-[#8888bb]" id="keyLabel">—</span>
-        </div>
-        <div class="flex items-center gap-1.5 bg-[#111120] border border-[#1e1e38] rounded-lg px-2.5 py-1.5">
-          <div class="dot-live" style="width:5px;height:5px"></div>
-          <select id="modelSelect" class="bg-transparent text-[.7rem] font-mono text-[#e2e2f0] outline-none cursor-pointer">
-            <option value="gemini-2.5-flash-preview-04-17">Flash 2.5 ⚡</option>
-            <option value="gemini-2.5-pro-preview-03-25">Pro 2.5 🧠</option>
-            <option value="gemini-2.0-flash">Flash 2.0 ✨</option>
-            <option value="gemini-2.0-flash-lite">Flash Lite 🔥</option>
-          </select>
-        </div>
+  <div id="p-gen" style="display:none;flex-direction:column;gap:14px">
+    <div>
+      <label class="fl">Modèle Gemini par défaut</label>
+      <select id="def-model-g" class="fsel">
+        <option value="gemini-2.5-flash-preview-04-17">Gemini 2.5 Flash ⚡ (recommandé)</option>
+        <option value="gemini-2.5-pro-preview-03-25">Gemini 2.5 Pro 🧠</option>
+        <option value="gemini-2.0-flash">Gemini 2.0 Flash ✨</option>
+        <option value="gemini-2.0-flash-lite">Gemini 2.0 Flash Lite 🔥</option>
+      </select>
+    </div>
+    <div>
+      <label class="fl">Modèle OpenRouter par défaut</label>
+      <select id="def-model-or" class="fsel">
+        <option value="meta-llama/llama-3.3-70b-instruct:free">Llama 3.3 70B (GRATUIT)</option>
+        <option value="deepseek/deepseek-r1:free">DeepSeek R1 (GRATUIT)</option>
+        <option value="google/gemma-3-27b-it:free">Gemma 3 27B (GRATUIT)</option>
+        <option value="mistralai/mistral-7b-instruct:free">Mistral 7B (GRATUIT)</option>
+        <option value="anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet</option>
+        <option value="openai/gpt-4o">GPT-4o</option>
+        <option value="openai/gpt-4o-mini">GPT-4o Mini</option>
+        <option value="google/gemini-2.0-flash-001">Gemini 2.0 Flash (OR)</option>
+      </select>
+    </div>
+    <div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+        <label class="fl" style="margin:0">Température</label>
+        <span style="font-size:.7rem;font-family:'JetBrains Mono',monospace;color:#6366f1" id="tv">0.70</span>
       </div>
-    </header>
+      <input type="range" class="sl" id="ts" min="0" max="2" step="0.01" value="0.7" oninput="document.getElementById('tv').textContent=parseFloat(this.value).toFixed(2)">
+      <div style="display:flex;justify-content:space-between;font-size:.6rem;color:#252545;font-family:'JetBrains Mono',monospace;margin-top:3px"><span>Précis</span><span>Créatif</span></div>
+    </div>
+    <div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+        <label class="fl" style="margin:0">Top-P</label>
+        <span style="font-size:.7rem;font-family:'JetBrains Mono',monospace;color:#6366f1" id="pv">0.95</span>
+      </div>
+      <input type="range" class="sl" id="ps" min="0" max="1" step="0.01" value="0.95" oninput="document.getElementById('pv').textContent=parseFloat(this.value).toFixed(2)">
+    </div>
+    <div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+        <label class="fl" style="margin:0">Max Tokens</label>
+        <span style="font-size:.7rem;font-family:'JetBrains Mono',monospace;color:#6366f1" id="tkv">8192</span>
+      </div>
+      <input type="range" class="sl" id="tks" min="256" max="32768" step="256" value="8192" oninput="document.getElementById('tkv').textContent=this.value">
+    </div>
+  </div>
 
-```
-<!-- MESSAGES -->
-<div class="flex-1 overflow-y-auto relative" id="messagesArea">
-  <div class="max-w-[680px] mx-auto px-4 py-6 space-y-4 pb-6" id="messages"></div>
-</div>
+  <!-- TAB SYS -->
 
-<!-- SCROLL BTN (fixed) -->
-<button id="scrollBtn" class="hidden" onclick="scrollToBottom(true)" aria-label="Scroll to bottom">
-  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-</button>
+  <div id="p-sys" style="display:none">
+    <label class="fl">System Instruction</label>
+    <textarea id="sysp" class="fi" rows="5" placeholder="Tu es NEXUS, une IA avancée. Tu réponds en français, de manière précise." style="resize:none;line-height:1.6"></textarea>
+  </div>
 
-<!-- STOP BAR -->
-<div id="stopBar" class="hidden flex-shrink-0 flex justify-center py-2">
-  <button onclick="stopStreaming()" class="stop-btn">
-    <svg width="10" height="10" fill="currentColor" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
-    Arrêter la génération
+  <button onclick="saveSettings()" style="width:100%;margin-top:16px;padding:11px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;border-radius:11px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .2s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+    Sauvegarder
   </button>
 </div>
+</div>
 
-<!-- INPUT -->
-<div id="inputArea" class="flex-shrink-0 px-4 pt-2 glass border-t border-[#1a1a2e]" style="padding-bottom:max(1rem,env(safe-area-inset-bottom))">
-  <div class="max-w-[680px] mx-auto">
-    <div class="glow-focus bg-[#111120] rounded-2xl flex items-end gap-2 p-2">
-      <textarea id="userInput" rows="1" placeholder="Envoie un message…" class="flex-1 bg-transparent px-2 py-1.5 text-sm text-[#e2e2f0] placeholder-[#303050] leading-relaxed resize-none" style="max-height:144px;overflow-y:auto" oninput="autoResize(this)" onkeydown="handleKey(event)"></textarea>
-      <button onclick="sendMessage()" id="sendBtn" class="btn-send w-9 h-9 rounded-xl flex items-center justify-center">
-        <svg width="14" height="14" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-      </button>
+<!-- ROOT -->
+
+<div id="root">
+
+<!-- SIDEBAR -->
+
+<aside id="sb">
+  <!-- Logo -->
+  <div style="padding:12px;border-bottom:1px solid #15152a">
+    <div style="display:flex;align-items:center;gap:9px;margin-bottom:10px">
+      <div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="13" height="13" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:800;color:#fff;letter-spacing:-.01em">NEXUS PRO</div>
+        <div style="font-size:.58rem;font-family:'JetBrains Mono',monospace;color:#333355;margin-top:-1px">Gemini · OpenRouter</div>
+      </div>
+      <div class="dot dot-g" style="margin-left:auto"></div>
     </div>
-    <p class="text-center text-[.6rem] text-[#252545] mt-1.5 font-mono">↵ envoyer · ⇧↵ saut de ligne</p>
+    <button onclick="newChat()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:7px;padding:8px;border-radius:9px;border:1px dashed #1e1e38;background:transparent;color:#444477;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif" onmouseover="this.style.borderColor='#6366f1';this.style.color='#a5b4fc'" onmouseout="this.style.borderColor='#1e1e38';this.style.color='#444477'">
+      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      Nouveau chat
+    </button>
+  </div>
+
+  <!-- Provider tabs in sidebar -->
+
+  <div style="display:flex;gap:4px;padding:8px 10px;border-bottom:1px solid #15152a">
+    <button onclick="filterProv('all')" id="fp-all" class="tb on" style="font-size:.65rem;padding:4px">Tous</button>
+    <button onclick="filterProv('gemini')" id="fp-gemini" class="tb off" style="font-size:.65rem;padding:4px">Gemini</button>
+    <button onclick="filterProv('openrouter')" id="fp-openrouter" class="tb off" style="font-size:.65rem;padding:4px">OpenRouter</button>
+  </div>
+
+  <!-- Conv list -->
+
+  <div id="cl" style="flex:1;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:2px"></div>
+
+  <!-- Bottom -->
+
+  <div style="padding:8px;border-top:1px solid #15152a;display:flex;flex-direction:column;gap:2px">
+    <button onclick="openModal()" style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;border:none;background:transparent;color:#555580;font-size:12px;font-weight:600;cursor:pointer;width:100%;transition:all .15s;font-family:'Inter',sans-serif" onmouseover="this.style.background='#12122a';this.style.color='#e2e2f0'" onmouseout="this.style.background='transparent';this.style.color='#555580'">
+      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      Paramètres & Clés API
+    </button>
+    <button onclick="clearAll()" style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;border:none;background:transparent;color:#333355;font-size:12px;font-weight:600;cursor:pointer;width:100%;transition:all .15s;font-family:'Inter',sans-serif" onmouseover="this.style.background='#1a0808';this.style.color='#f87171'" onmouseout="this.style.background='transparent';this.style.color='#333355'">
+      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+      Effacer tout
+    </button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+
+<div id="main">
+  <!-- TOPBAR -->
+  <div id="topbar">
+    <button class="ib" id="menu-btn" onclick="toggleSB()" style="display:none">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <span id="htitle" style="flex:1;font-size:13px;color:#666688;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Nouveau chat</span>
+    <!-- Provider + model selector -->
+    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+      <div id="prov-indicator" style="display:flex;align-items:center;gap:5px;background:#111122;border:1px solid #1e1e38;border-radius:8px;padding:4px 8px;cursor:pointer" onclick="openModal()">
+        <div class="dot dot-g" id="ki-dot"></div>
+        <span id="ki-label" style="font-size:.62rem;font-family:'JetBrains Mono',monospace;color:#666688">—</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:5px;background:#111122;border:1px solid #1e1e38;border-radius:8px;padding:4px 8px">
+        <div class="dot dot-i"></div>
+        <select id="msel" style="background:transparent;border:none;outline:none;color:#e2e2f0;font-size:.68rem;font-family:'JetBrains Mono',monospace;cursor:pointer" onchange="onModelChange()"></select>
+      </div>
+    </div>
+  </div>
+
+  <!-- MESSAGES -->
+
+  <div id="msgs-wrap">
+    <div id="msgs"></div>
+  </div>
+
+  <!-- SCROLL BTN -->
+
+  <button id="scrollbtn" style="display:none;bottom:calc(var(--ib,90px) + 10px)" onclick="scrollBot(true)">
+    <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>
+
+  <!-- STOP BAR -->
+
+  <div id="stopbar">
+    <button class="stopbtn" onclick="stopStream()">
+      <svg width="10" height="10" fill="currentColor" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
+      Arrêter
+    </button>
+  </div>
+
+  <!-- INPUT -->
+
+  <div id="bottom">
+    <div id="input-inner">
+      <div id="input-box">
+        <textarea id="inp" rows="1" placeholder="Envoie un message…" onkeydown="onKey(event)" oninput="resize(this)"></textarea>
+        <button id="send" onclick="send()">
+          <svg width="14" height="14" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+      <div style="text-align:center;font-size:.58rem;color:#1e1e38;margin-top:5px;font-family:'JetBrains Mono',monospace">↵ envoyer · ⇧↵ saut de ligne</div>
+    </div>
   </div>
 </div>
-```
-
-  </div>
 </div>
 
 <script>
-(function(){
-  // ── MODELS CONFIG (tous v1beta - seul endpoint qui marche en 2026) ──
-  const MODELS = {
-    'gemini-2.5-flash-preview-04-17': { api: 'v1beta', label: 'Flash 2.5' },
-    'gemini-2.5-pro-preview-03-25':   { api: 'v1beta', label: 'Pro 2.5'   },
-    'gemini-2.0-flash':               { api: 'v1beta', label: 'Flash 2.0' },
-    'gemini-2.0-flash-lite':          { api: 'v1beta', label: 'Flash Lite' },
-  };
+(()=>{
+// ═══════════════════════════════
+// MODELS CONFIG
+// ═══════════════════════════════
+const GEMINI_MODELS = {
+  'gemini-2.5-flash-preview-04-17': 'Flash 2.5 ⚡',
+  'gemini-2.5-pro-preview-03-25':   'Pro 2.5 🧠',
+  'gemini-2.0-flash':               'Flash 2.0 ✨',
+  'gemini-2.0-flash-lite':          'Flash Lite 🔥',
+};
+const OR_MODELS = {
+  'meta-llama/llama-3.3-70b-instruct:free': 'Llama 3.3 70B',
+  'deepseek/deepseek-r1:free':              'DeepSeek R1',
+  'google/gemma-3-27b-it:free':             'Gemma 3 27B',
+  'mistralai/mistral-7b-instruct:free':     'Mistral 7B',
+  'anthropic/claude-3.5-sonnet':            'Claude 3.5 Sonnet',
+  'openai/gpt-4o':                          'GPT-4o',
+  'openai/gpt-4o-mini':                     'GPT-4o Mini',
+  'google/gemini-2.0-flash-001':            'Gemini 2.0 Flash',
+};
 
-  // ── STATE ──
-  let convs = [];
-  let activeId = null;
-  let isStreaming = false;
-  let abortCtrl = null;
-  let activeKeyIdx = 0;
-  let safetyMode = 'BLOCK_NONE';
-  let keyCache = [];
+// ═══════════════════════════════
+// STATE
+// ═══════════════════════════════
+let convs=[], activeId=null, streaming=false, abort=null;
+let keyCache=[], provFilter='all';
+let curProvider='gemini'; // 'gemini' | 'openrouter'
+let modalProvider='gemini';
 
-  // ── iOS VIEWPORT FIX ──
-  // Gère le clavier virtuel sur iOS/Android
-  function fixViewport() {
-    const h = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-    document.documentElement.style.setProperty('--app-height', h + 'px');
-    // Met à jour la position du bouton scroll
-    const inputArea = document.getElementById('inputArea');
-    if (inputArea) {
-      const inputH = inputArea.offsetHeight + (document.getElementById('stopBar')?.offsetHeight || 0);
-      document.documentElement.style.setProperty('--input-h', inputH + 'px');
-    }
+// ═══════════════════════════════
+// VIEWPORT FIX (iOS)
+// ═══════════════════════════════
+function fixVP(){
+  const h = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+  document.documentElement.style.setProperty('--app-h', h+'px');
+  const bot = document.getElementById('bottom');
+  if(bot) document.documentElement.style.setProperty('--ib', bot.offsetHeight+'px');
+}
+if(window.visualViewport){
+  window.visualViewport.addEventListener('resize', fixVP);
+  window.visualViewport.addEventListener('scroll', fixVP);
+}
+window.addEventListener('resize', fixVP);
+fixVP(); setTimeout(fixVP,100); setTimeout(fixVP,500);
+
+// ═══════════════════════════════
+// CRYPTO
+// ═══════════════════════════════
+async function ckey(){
+  let s=localStorage.getItem('nx_s');
+  if(!s){s=Array.from(crypto.getRandomValues(new Uint8Array(24))).join('-');localStorage.setItem('nx_s',s)}
+  const km=await crypto.subtle.importKey('raw',new TextEncoder().encode('nx-v4-'+s),'PBKDF2',false,['deriveKey']);
+  return crypto.subtle.deriveKey({name:'PBKDF2',salt:new TextEncoder().encode('nx-salt-v4'),iterations:8000,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);
+}
+async function enc(t){
+  const k=await ckey(),iv=crypto.getRandomValues(new Uint8Array(12));
+  const e=await crypto.subtle.encrypt({name:'AES-GCM',iv},k,new TextEncoder().encode(t));
+  const b=new Uint8Array(12+e.byteLength);b.set(iv,0);b.set(new Uint8Array(e),12);
+  return btoa(Array.from(b,x=>String.fromCharCode(x)).join(''));
+}
+async function dec(d){
+  try{
+    const k=await ckey(),b=Uint8Array.from(atob(d),c=>c.charCodeAt(0));
+    const r=await crypto.subtle.decrypt({name:'AES-GCM',iv:b.slice(0,12)},k,b.slice(12));
+    return new TextDecoder().decode(r);
+  }catch{return null}
+}
+
+// ═══════════════════════════════
+// KEY STORAGE
+// ═══════════════════════════════
+function rawKeys(){try{return JSON.parse(localStorage.getItem('nx_keys')||'[]')}catch{return[]}}
+function saveRaw(k){localStorage.setItem('nx_keys',JSON.stringify(k))}
+
+async function loadKeys(){
+  const raw=rawKeys(); keyCache=[];
+  for(const r of raw){
+    const plain=await dec(r.enc);
+    if(plain) keyCache.push({...r, key:plain});
   }
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', fixViewport);
-    window.visualViewport.addEventListener('scroll', () => {
-      // Scroll le main chat avec le viewport sur iOS
-      const offset = window.visualViewport.offsetTop || 0;
-      document.getElementById('appRoot').style.transform = offset ? `translateY(${-offset}px)` : '';
-      fixViewport();
-    });
-  }
-  window.addEventListener('resize', fixViewport);
-  fixViewport();
-  // Re-fix après render
-  setTimeout(fixViewport, 100);
-  setTimeout(fixViewport, 500);
+  return keyCache;
+}
 
-  // ── CRYPTO ──
-  async function getCryptoKey() {
-    let seed = localStorage.getItem('nx_seed');
-    if (!seed) {
-      seed = Array.from(crypto.getRandomValues(new Uint8Array(24))).join('-');
-      localStorage.setItem('nx_seed', seed);
-    }
-    const km = await crypto.subtle.importKey('raw', new TextEncoder().encode('nexus-pro-v3-' + seed), 'PBKDF2', false, ['deriveKey']);
-    return crypto.subtle.deriveKey(
-      { name: 'PBKDF2', salt: new TextEncoder().encode('nx-salt-v3'), iterations: 8000, hash: 'SHA-256' },
-      km, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
-    );
-  }
-  async function encrypt(text) {
-    const k = await getCryptoKey();
-    const iv = crypto.getRandomValues(new Uint8Array(12));
-    const enc = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, k, new TextEncoder().encode(text));
-    const buf = new Uint8Array(12 + enc.byteLength);
-    buf.set(iv, 0); buf.set(new Uint8Array(enc), 12);
-    return btoa(Array.from(buf, b => String.fromCharCode(b)).join(''));
-  }
-  async function decrypt(data) {
-    try {
-      const k = await getCryptoKey();
-      const buf = Uint8Array.from(atob(data), c => c.charCodeAt(0));
-      const dec = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: buf.slice(0, 12) }, k, buf.slice(12));
-      return new TextDecoder().decode(dec);
-    } catch { return null; }
-  }
+function detectProvider(key){
+  if(key.startsWith('sk-or-')) return 'openrouter';
+  return 'gemini';
+}
 
-  // ── STORAGE ──
-  function saveState() { try { localStorage.setItem('nx_convs', JSON.stringify(convs)); } catch(e) {} }
-  function loadState() { try { convs = JSON.parse(localStorage.getItem('nx_convs') || '[]'); } catch { convs = []; } }
-  function getRawKeys() { try { return JSON.parse(localStorage.getItem('nx_keys') || '[]'); } catch { return []; } }
-  function saveRawKeys(keys) { localStorage.setItem('nx_keys', JSON.stringify(keys)); }
+window.addKey=async function(){
+  const kv=document.getElementById('ki').value.trim();
+  const lbl=document.getElementById('kl').value.trim()||`Clé ${rawKeys().length+1}`;
+  if(!kv){toast('Entre une clé !','e');return}
+  const prov=detectProvider(kv);
+  const e=await enc(kv);
+  const raw=rawKeys();
+  raw.push({id:Date.now().toString(),enc:e,label:lbl,provider:prov,status:'unknown'});
+  saveRaw(raw); await loadKeys();
+  document.getElementById('ki').value='';
+  document.getElementById('kl').value='';
+  renderKeys(); updateKI();
+  toast(`Clé "${lbl}" ajoutée (${prov==='openrouter'?'OpenRouter':'Gemini'})`,'s');
+};
 
-  async function decryptAllKeys() {
-    const raw = getRawKeys();
-    keyCache = [];
-    for (const k of raw) {
-      const plain = await decrypt(k.enc);
-      if (plain) keyCache.push({ label: k.label, key: plain, id: k.id, status: k.status || 'ok' });
-    }
-    return keyCache;
-  }
+window.delKey=async function(id){
+  saveRaw(rawKeys().filter(k=>k.id!==id));
+  await loadKeys(); renderKeys(); updateKI();
+  toast('Clé supprimée','i');
+};
 
-  // ── KEY MANAGEMENT ──
-  window.addKey = async function() {
-    const keyVal = document.getElementById('newKeyInput').value.trim();
-    const label = document.getElementById('newKeyLabel').value.trim() || `Clé ${getRawKeys().length + 1}`;
-    if (!keyVal) { toast('Entre une clé API !', 'error'); return; }
-    const enc = await encrypt(keyVal);
-    const raw = getRawKeys();
-    raw.push({ id: Date.now().toString(), enc, label, status: 'unknown' });
-    saveRawKeys(raw);
-    document.getElementById('newKeyInput').value = '';
-    document.getElementById('newKeyLabel').value = '';
-    await decryptAllKeys();
-    renderKeys();
-    toast(`Clé "${label}" ajoutée`, 'success');
-  };
-
-  window.removeKey = async function(id) {
-    const raw = getRawKeys().filter(k => k.id !== id);
-    saveRawKeys(raw);
-    await decryptAllKeys();
-    renderKeys();
-    updateKeyIndicator();
-    toast('Clé supprimée', 'info');
-  };
-
-  window.testKey = async function(id) {
-    const raw = getRawKeys();
-    const kObj = raw.find(k => k.id === id);
-    if (!kObj) return;
-    const cardEl = document.querySelector(`[data-key-id="${id}"]`);
-    if (cardEl) cardEl.className = cardEl.className.replace(/\b(ok|err)\b/g, '').trim() + ' testing';
-    const plain = await decrypt(kObj.enc);
-    if (!plain) { toast('Déchiffrement échoué', 'error'); return; }
-    try {
-      // ✅ FIX: utilise x-goog-api-key header (supporte les clés AQ.)
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`;
-      const resp = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-goog-api-key': plain   // ← header au lieu de ?key=
-        },
-        body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: 'hi' }] }], generationConfig: { maxOutputTokens: 5 } })
+window.testKey=async function(id){
+  const raw=rawKeys(); const kObj=raw.find(k=>k.id===id);
+  if(!kObj) return;
+  const plain=await dec(kObj.enc); if(!plain){toast('Erreur déchiffrement','e');return}
+  toast('Test en cours…','i');
+  try{
+    let ok=false, msg='';
+    if(kObj.provider==='openrouter'){
+      const r=await fetch('https://openrouter.ai/api/v1/chat/completions',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+plain,'HTTP-Referer':'https://nexus-pro.app','X-Title':'NEXUS PRO'},
+        body:JSON.stringify({model:'meta-llama/llama-3.3-70b-instruct:free',messages:[{role:'user',content:'hi'}],max_tokens:5})
       });
-      const json = await resp.json();
-      if (resp.ok) {
-        kObj.status = 'ok';
-        toast(`✓ Clé "${kObj.label}" valide`, 'success');
-      } else {
-        kObj.status = resp.status === 429 ? 'quota' : 'err';
-        const errMsg = json.error?.message || `HTTP ${resp.status}`;
-        toast(`✗ ${kObj.label}: ${errMsg.slice(0, 80)}`, 'error');
-      }
-    } catch (e) {
-      kObj.status = 'err';
-      toast(`Erreur réseau: ${e.message}`, 'error');
-    }
-    const idx = raw.findIndex(k => k.id === id);
-    if (idx >= 0) raw[idx] = kObj;
-    saveRawKeys(raw);
-    await decryptAllKeys();
-    renderKeys();
-  };
-
-  function renderKeys() {
-    const raw = getRawKeys();
-    const el = document.getElementById('keysList');
-    if (raw.length === 0) {
-      el.innerHTML = `<div class="text-center py-6 text-xs text-[#303050] font-mono">Aucune clé configurée</div>`;
-      return;
-    }
-    el.innerHTML = raw.map(k => {
-      const statusColors = { ok:'text-green-400', err:'text-red-400', quota:'text-yellow-400', unknown:'text-[#5555aa]', testing:'text-indigo-400' };
-      const statusLabels = { ok:'● OK', err:'✗ ERR', quota:'⚠ QUOTA', unknown:'○ ?', testing:'… TEST' };
-      const sc = statusColors[k.status||'unknown'] || 'text-[#5555aa]';
-      const sl = statusLabels[k.status||'unknown'] || '○';
-      return `<div class="key-card ${k.status==='ok'?'ok':k.status==='err'||k.status==='quota'?'err':''}" data-key-id="${k.id}">
-        <div class="flex items-center gap-2">
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2">
-              <span class="text-xs font-bold text-[#e2e2f0]">${escHtml(k.label)}</span>
-              <span class="text-[.65rem] font-mono ${sc}">${sl}</span>
-            </div>
-            <div class="text-[.65rem] font-mono text-[#333355] mt-0.5">••••••••••••${k.id.slice(-4)}</div>
-          </div>
-          <div class="flex gap-1.5 flex-shrink-0">
-            <button onclick="testKey('${k.id}')" class="export-btn">Test</button>
-            <button onclick="removeKey('${k.id}')" class="export-btn hover:!border-red-500 hover:!text-red-400">✕</button>
-          </div>
-        </div>
-      </div>`;
-    }).join('');
-  }
-
-  function updateKeyIndicator() {
-    const indicator = document.getElementById('keyIndicator');
-    const labelEl = document.getElementById('keyLabel');
-    if (keyCache.length === 0) {
-      indicator.classList.add('hidden'); indicator.classList.remove('flex');
+      const j=await r.json();
+      ok=r.ok; msg=j.error?.message||`HTTP ${r.status}`;
     } else {
-      indicator.classList.remove('hidden'); indicator.classList.add('flex');
-      const active = keyCache[activeKeyIdx % keyCache.length];
-      labelEl.textContent = active?.label || '—';
-      const dot = indicator.querySelector('.rounded-full');
-      const s = active?.status || 'ok';
-      dot.className = `w-2 h-2 rounded-full flex-shrink-0 ${s==='ok'?'bg-green-400':s==='quota'?'bg-yellow-400':'bg-red-400'}`;
-    }
-  }
-
-  async function getWorkingKey() {
-    if (keyCache.length === 0) await decryptAllKeys();
-    if (keyCache.length === 0) throw new Error('Aucune clé API. Configure une clé dans Paramètres ⚙');
-    for (let i = 0; i < keyCache.length; i++) {
-      const idx = (activeKeyIdx + i) % keyCache.length;
-      if (keyCache[idx].status !== 'err') {
-        activeKeyIdx = idx;
-        updateKeyIndicator();
-        return keyCache[idx].key;
-      }
-    }
-    throw new Error('Toutes les clés API sont en erreur ou épuisées');
-  }
-
-  function markKeyQuota() {
-    if (keyCache.length === 0) return false;
-    const raw = getRawKeys();
-    const curKey = keyCache[activeKeyIdx % keyCache.length];
-    if (curKey) {
-      const k = raw.find(r => r.id === curKey.id);
-      if (k) { k.status = 'quota'; saveRawKeys(raw); }
-      curKey.status = 'quota';
-    }
-    if (keyCache.length > 1) {
-      activeKeyIdx = (activeKeyIdx + 1) % keyCache.length;
-      updateKeyIndicator();
-      toast(`Quota → rotation sur "${keyCache[activeKeyIdx]?.label}"`, 'info');
-      return true;
-    }
-    return false;
-  }
-
-  // ── GEMINI API ──
-  // ✅ FIX PRINCIPAL: x-goog-api-key header + v1beta pour tous les modèles
-  // Les clés AQ. ne fonctionnent PAS passées via ?key= sur certains endpoints
-  // mais fonctionnent via le header x-goog-api-key
-  async function callGeminiStream(messages, systemPrompt, onToken, signal, retryCount = 0) {
-    const modelId = document.getElementById('modelSelect').value;
-    const cfg = MODELS[modelId] || { api: 'v1beta' };
-    const apiKey = await getWorkingKey();
-
-    // ✅ On n'utilise plus ?key= → remplacé par header
-    const url = `https://generativelanguage.googleapis.com/${cfg.api}/models/${modelId}:streamGenerateContent?alt=sse`;
-
-    const safetySettings = [
-      'HARM_CATEGORY_HARASSMENT','HARM_CATEGORY_HATE_SPEECH',
-      'HARM_CATEGORY_SEXUALLY_EXPLICIT','HARM_CATEGORY_DANGEROUS_CONTENT'
-    ].map(c => ({ category: c, threshold: safetyMode }));
-
-    const body = {
-      contents: messages.map(m => ({
-        role: m.role === 'user' ? 'user' : 'model',
-        parts: [{ text: m.content }]
-      })),
-      generationConfig: {
-        temperature: parseFloat(document.getElementById('tempSlider').value),
-        topP: parseFloat(document.getElementById('topPSlider').value),
-        maxOutputTokens: parseInt(document.getElementById('tokensSlider').value),
-      },
-      safetySettings,
-    };
-    if (systemPrompt) body.systemInstruction = { parts: [{ text: systemPrompt }] };
-
-    let resp;
-    try {
-      resp = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-goog-api-key': apiKey   // ✅ Header au lieu de query param
-        },
-        body: JSON.stringify(body),
-        signal,
+      const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','x-goog-api-key':plain},
+        body:JSON.stringify({contents:[{role:'user',parts:[{text:'hi'}]}],generationConfig:{maxOutputTokens:5}})
       });
-    } catch (e) {
-      if (e.name === 'AbortError') return;
-      throw new Error('Erreur réseau. Vérifie ta connexion.');
+      const j=await r.json();
+      ok=r.ok; msg=j.error?.message||`HTTP ${r.status}`;
     }
+    kObj.status=ok?'ok':'err';
+    const idx=raw.findIndex(k=>k.id===id); if(idx>=0) raw[idx]=kObj;
+    saveRaw(raw); await loadKeys(); renderKeys(); updateKI();
+    toast(ok?`✓ "${kObj.label}" valide`:`✗ ${msg.slice(0,70)}`, ok?'s':'e');
+  }catch(e){kObj.status='err';toast('Erreur réseau: '+e.message,'e')}
+};
 
-    if (!resp.ok) {
-      const errData = await resp.json().catch(() => ({}));
-      const msg = errData.error?.message || `HTTP ${resp.status}`;
-      if (resp.status === 429 && retryCount < keyCache.length) {
-        const canRetry = markKeyQuota();
-        if (canRetry) return callGeminiStream(messages, systemPrompt, onToken, signal, retryCount + 1);
-      }
-      throw new Error(msg);
-    }
-
-    const reader = resp.body.getReader();
-    const dec = new TextDecoder();
-    let buf = '';
-    try {
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buf += dec.decode(value, { stream: true });
-        const lines = buf.split('\n');
-        buf = lines.pop();
-        for (const line of lines) {
-          const t = line.trim();
-          if (!t.startsWith('data:')) continue;
-          const json = t.slice(5).trim();
-          if (!json || json === '[DONE]') continue;
-          try {
-            const chunk = JSON.parse(json);
-            const text = chunk.candidates?.[0]?.content?.parts?.[0]?.text;
-            if (text) onToken(text);
-          } catch {}
-        }
-      }
-    } catch (e) {
-      if (e.name !== 'AbortError') throw e;
-    } finally { reader.releaseLock(); }
+function renderKeys(){
+  const raw=rawKeys();
+  const prov=modalProvider;
+  const filtered=raw.filter(k=>k.provider===prov||!k.provider&&prov==='gemini');
+  const el=document.getElementById('keys-list');
+  if(!filtered.length){
+    el.innerHTML=`<div style="text-align:center;padding:20px;font-size:.7rem;font-family:'JetBrains Mono',monospace;color:#252545">Aucune clé ${prov==='openrouter'?'OpenRouter':'Gemini'}</div>`;
+    return;
   }
-
-  async function autoRename(convId) {
-    const conv = convs.find(c => c.id === convId);
-    if (!conv || conv.messages.length === 0) return;
-    const firstMsg = conv.messages.find(m => m.role === 'user')?.content?.slice(0, 300);
-    if (!firstMsg) return;
-    const apiKey = await getWorkingKey().catch(() => null);
-    if (!apiKey) return;
-    try {
-      const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
-        body: JSON.stringify({
-          contents: [{ role: 'user', parts: [{ text: `Génère un titre court (3-5 mots max, sans guillemets) pour cette conversation: "${firstMsg}"` }] }],
-          generationConfig: { maxOutputTokens: 20, temperature: 0.3 },
-        })
-      });
-      const data = await resp.json();
-      const title = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim()?.slice(0, 50);
-      if (title && title.length > 2) {
-        conv.title = title;
-        saveState(); renderConvList();
-        if (activeId === convId) document.getElementById('headerTitle').textContent = title;
-      }
-    } catch {}
-  }
-
-  // ── CONVERSATION MANAGEMENT ──
-  window.newChat = function() {
-    const id = 'c_' + Date.now();
-    const sysPrompt = document.getElementById('globalSystemPrompt').value.trim();
-    convs.unshift({ id, title: 'Nouveau chat', messages: [], systemPrompt: sysPrompt, created: Date.now() });
-    saveState(); activeId = id;
-    renderConvList(); renderMessages();
-    document.getElementById('userInput').focus();
-    closeSidebar();
-  };
-
-  window.loadConv = function(id) {
-    activeId = id;
-    renderConvList(); renderMessages();
-    closeSidebar();
-    setTimeout(() => scrollToBottom(false), 50);
-  };
-
-  window.deleteConv = function(id, e) {
-    e.stopPropagation();
-    convs = convs.filter(c => c.id !== id);
-    saveState();
-    if (activeId === id) { activeId = convs[0]?.id || null; renderMessages(); }
-    renderConvList();
-  };
-
-  window.clearAll = function() {
-    if (!confirm('Effacer toutes les conversations ?')) return;
-    convs = []; activeId = null; saveState();
-    renderConvList(); renderMessages();
-  };
-
-  window.exportJSON = function(id, e) {
-    e.stopPropagation();
-    const conv = convs.find(c => c.id === id);
-    if (!conv) return;
-    const blob = new Blob([JSON.stringify(conv, null, 2)], { type: 'application/json' });
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-    a.download = (conv.title || 'chat') + '.json'; a.click(); URL.revokeObjectURL(a.href);
-  };
-
-  // ── RENDERING ──
-  function renderConvList() {
-    const el = document.getElementById('convList');
-    if (convs.length === 0) {
-      el.innerHTML = `<p class="text-center text-[.65rem] font-mono text-[#252545] py-6">Pas de conversations</p>`;
-      return;
-    }
-    el.innerHTML = convs.map(c => `
-      <div onclick="loadConv('${c.id}')" class="conv-item rounded-xl px-3 py-2 group flex items-center gap-2 ${c.id === activeId ? 'active' : ''}">
-        <svg class="flex-shrink-0 text-[#333355] group-hover:text-[#5555aa]" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-        <span class="text-[.72rem] text-[#8888bb] truncate flex-1 leading-tight">${escHtml(c.title)}</span>
-        <div class="opacity-0 group-hover:opacity-100 flex gap-1 flex-shrink-0">
-          <button onclick="exportJSON('${c.id}', event)" class="text-[#333355] hover:text-indigo-400 transition-colors p-0.5">
-            <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          </button>
-          <button onclick="deleteConv('${c.id}', event)" class="text-[#333355] hover:text-red-400 transition-colors p-0.5">
-            <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
-          </button>
-        </div>
-      </div>`).join('');
-  }
-
-  function renderMessages() {
-    const conv = convs.find(c => c.id === activeId);
-    const container = document.getElementById('messages');
-    document.getElementById('headerTitle').textContent = conv?.title || 'Nouveau chat';
-
-    if (!conv || conv.messages.length === 0) {
-      container.innerHTML = `
-        <div class="flex flex-col items-center justify-center py-20 text-center slide-up">
-          <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] flex items-center justify-center mb-4" style="box-shadow:0 8px 32px rgba(99,102,241,.3)">
-            <svg width="28" height="28" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+  const sc={ok:'color:#4ade80',err:'color:#f87171',quota:'color:#fbbf24',unknown:'color:#444488',testing:'color:#818cf8'};
+  const sl={ok:'● OK',err:'✗ ERR',quota:'⚠ QUOTA',unknown:'○ ?',testing:'… TEST'};
+  el.innerHTML=filtered.map(k=>`
+    <div class="kc ${k.status==='ok'?'ok':k.status==='err'||k.status==='quota'?'err':k.provider==='openrouter'?'or':''}">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="font-size:.75rem;font-weight:700;color:#e2e2f0">${esc(k.label)}</span>
+            <span class="${k.provider==='openrouter'?'prov-or':'prov-g'}">${k.provider==='openrouter'?'OpenRouter':'Gemini'}</span>
+            <span style="font-size:.6rem;font-family:'JetBrains Mono',monospace;${sc[k.status||'unknown']||sc.unknown}">${sl[k.status||'unknown']||'○'}</span>
           </div>
-          <h2 class="text-lg font-extrabold text-white mb-2">NEXUS PRO</h2>
-          <p class="text-xs text-[#444466] max-w-xs leading-relaxed">Propulsé par Google Gemini API v1beta.<br>${keyCache.length === 0 ? '<button onclick="openSettings()" style="color:#a5b4fc;text-decoration:underline;background:none;border:none;cursor:pointer;font-size:inherit">Configure ta clé API →</button>' : keyCache.length + ' clé(s) active(s)'}</p>
-        </div>`;
-      return;
-    }
-    container.innerHTML = conv.messages.map((m, i) => buildMessageHTML(m, i)).join('');
-    postProcessMessages(container);
-    scrollToBottom(false);
-    setTimeout(fixViewport, 50);
-  }
+          <div style="font-size:.6rem;font-family:'JetBrains Mono',monospace;color:#252545;margin-top:2px">••••${k.id.slice(-4)}</div>
+        </div>
+        <div style="display:flex;gap:5px;flex-shrink:0">
+          <button onclick="testKey('${k.id}')" style="background:#0e0e1e;border:1px solid #1e1e38;border-radius:7px;padding:3px 8px;font-size:.6rem;color:#555580;cursor:pointer;font-family:'JetBrains Mono',monospace;transition:all .15s" onmouseover="this.style.borderColor='#6366f1';this.style.color='#a5b4fc'" onmouseout="this.style.borderColor='#1e1e38';this.style.color='#555580'">Test</button>
+          <button onclick="delKey('${k.id}')" style="background:#0e0e1e;border:1px solid #1e1e38;border-radius:7px;padding:3px 8px;font-size:.6rem;color:#555580;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='#ef4444';this.style.color='#f87171'" onmouseout="this.style.borderColor='#1e1e38';this.style.color='#555580'">✕</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
 
-  function buildMessageHTML(m, i) {
-    if (m.role === 'user') {
-      return `<div class="slide-up flex justify-end"><div class="msg-user px-4 py-3 max-w-[82%]"><p class="text-sm text-[#e2e2f0] leading-relaxed whitespace-pre-wrap">${escHtml(m.content)}</p></div></div>`;
+function updateKI(){
+  const el=document.getElementById('prov-indicator');
+  const lbl=document.getElementById('ki-label');
+  const dot=document.getElementById('ki-dot');
+  const active=keyCache.filter(k=>k.provider===curProvider||(!k.provider&&curProvider==='gemini'));
+  if(!active.length){lbl.textContent='No key';dot.style.background='#ef4444';return}
+  const best=active.find(k=>k.status==='ok')||active[0];
+  lbl.textContent=best.label+(curProvider==='openrouter'?' [OR]':'');
+  dot.style.background=best.status==='ok'?'#22c55e':best.status==='quota'?'#fbbf24':'#ef4444';
+}
+
+async function getBestKey(prov){
+  await loadKeys();
+  const pool=keyCache.filter(k=>(k.provider||'gemini')===prov);
+  if(!pool.length) throw new Error(`Aucune clé ${prov==='openrouter'?'OpenRouter':'Gemini'} configurée. Va dans Paramètres ⚙`);
+  const ok=pool.find(k=>k.status!=='err')||pool[0];
+  return ok.key;
+}
+
+// ═══════════════════════════════
+// MODEL SELECT
+// ═══════════════════════════════
+function buildModelSelect(){
+  const sel=document.getElementById('msel');
+  const pref=JSON.parse(localStorage.getItem('nx_prefs')||'{}');
+  sel.innerHTML='';
+  // Gemini group
+  const gg=document.createElement('optgroup'); gg.label='── Gemini';
+  Object.entries(GEMINI_MODELS).forEach(([v,l])=>{
+    const o=document.createElement('option'); o.value=v; o.textContent=l;
+    if(v===(pref.modelG||'gemini-2.5-flash-preview-04-17')) o.selected=true;
+    gg.appendChild(o);
+  });
+  sel.appendChild(gg);
+  // OpenRouter group
+  const og=document.createElement('optgroup'); og.label='── OpenRouter';
+  Object.entries(OR_MODELS).forEach(([v,l])=>{
+    const o=document.createElement('option'); o.value=v; o.textContent=l+(v.includes(':free')?' 🆓':'');
+    if(v===(pref.modelOR||'meta-llama/llama-3.3-70b-instruct:free')) o.selected=true;
+    og.appendChild(o);
+  });
+  sel.appendChild(og);
+}
+
+function onModelChange(){
+  const v=document.getElementById('msel').value;
+  if(OR_MODELS[v]) curProvider='openrouter';
+  else curProvider='gemini';
+  updateKI();
+}
+
+// ═══════════════════════════════
+// API CALLS
+// ═══════════════════════════════
+async function streamGemini(msgs, sys, onTok, sig){
+  const modelId=document.getElementById('msel').value;
+  const key=await getBestKey('gemini');
+  const url=`https://generativelanguage.googleapis.com/v1beta/models/${modelId}:streamGenerateContent?alt=sse`;
+  const body={
+    contents:msgs.map(m=>({role:m.role==='user'?'user':'model',parts:[{text:m.content}]})),
+    generationConfig:{
+      temperature:parseFloat(document.getElementById('ts').value),
+      topP:parseFloat(document.getElementById('ps').value),
+      maxOutputTokens:parseInt(document.getElementById('tks').value),
     }
-    const modelCfg = MODELS[m.model] || {};
-    return `<div class="slide-up group">
-      <div class="flex items-center gap-2 mb-1.5">
-        <span class="tag bg-[#111120] border border-[#1e1e38] text-[#5566cc]">
-          <div style="width:5px;height:5px;border-radius:50%;background:#6366f1;flex-shrink:0"></div>
-          ${escHtml(modelCfg.label || m.model || 'Gemini')}
-        </span>
-        <button onclick="copyMsg(${i})" class="ml-auto text-[.65rem] font-mono text-[#333355] hover:text-indigo-400 transition-colors px-2 py-1 rounded hover:bg-[#111120] opacity-0 group-hover:opacity-100">
-          <svg style="display:inline;width:10px;height:10px;margin-right:3px" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copier
+  };
+  if(sys) body.systemInstruction={parts:[{text:sys}]};
+  const resp=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify(body),signal:sig});
+  if(!resp.ok){const e=await resp.json().catch(()=>({}));throw new Error(e.error?.message||`HTTP ${resp.status}`)}
+  await readSSE(resp,onTok);
+}
+
+async function streamOR(msgs, sys, onTok, sig){
+  const modelId=document.getElementById('msel').value;
+  const key=await getBestKey('openrouter');
+  const messages=[];
+  if(sys) messages.push({role:'system',content:sys});
+  msgs.forEach(m=>messages.push({role:m.role==='user'?'user':'assistant',content:m.content}));
+  const resp=await fetch('https://openrouter.ai/api/v1/chat/completions',{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'Authorization':'Bearer '+key,
+      'HTTP-Referer':'https://nexus-pro.app',
+      'X-Title':'NEXUS PRO'
+    },
+    body:JSON.stringify({
+      model:modelId,
+      messages,
+      stream:true,
+      temperature:parseFloat(document.getElementById('ts').value),
+      top_p:parseFloat(document.getElementById('ps').value),
+      max_tokens:parseInt(document.getElementById('tks').value),
+    }),
+    signal:sig
+  });
+  if(!resp.ok){const e=await resp.json().catch(()=>({}));throw new Error(e.error?.message||`HTTP ${resp.status}`)}
+  // OpenRouter uses OpenAI SSE format
+  await readSSE(resp,onTok,'or');
+}
+
+async function readSSE(resp, onTok, fmt='gemini'){
+  const reader=resp.body.getReader(), dec=new TextDecoder();
+  let buf='';
+  try{
+    while(true){
+      const{done,value}=await reader.read();
+      if(done) break;
+      buf+=dec.decode(value,{stream:true});
+      const lines=buf.split('\n'); buf=lines.pop();
+      for(const line of lines){
+        const t=line.trim();
+        if(!t.startsWith('data:')) continue;
+        const json=t.slice(5).trim();
+        if(!json||json==='[DONE]') continue;
+        try{
+          const chunk=JSON.parse(json);
+          let txt='';
+          if(fmt==='or') txt=chunk.choices?.[0]?.delta?.content||'';
+          else txt=chunk.candidates?.[0]?.content?.parts?.[0]?.text||'';
+          if(txt) onTok(txt);
+        }catch{}
+      }
+    }
+  }catch(e){if(e.name!=='AbortError') throw e}
+  finally{reader.releaseLock()}
+}
+
+// ═══════════════════════════════
+// CONVERSATIONS
+// ═══════════════════════════════
+function saveConvs(){try{localStorage.setItem('nx_convs',JSON.stringify(convs))}catch{}}
+function loadConvs(){try{convs=JSON.parse(localStorage.getItem('nx_convs')||'[]')}catch{convs=[]}}
+function getConv(){return convs.find(c=>c.id===activeId)}
+
+window.newChat=function(){
+  const id='c'+Date.now();
+  const sys=document.getElementById('sysp').value.trim();
+  convs.unshift({id,title:'Nouveau chat',messages:[],sys,provider:curProvider,model:document.getElementById('msel').value,ts:Date.now()});
+  saveConvs(); activeId=id;
+  renderCL(); renderMsgs(); closeSB();
+  document.getElementById('inp').focus();
+};
+
+window.loadConv=function(id){
+  activeId=id;
+  const c=convs.find(x=>x.id===id);
+  if(c){
+    // Restore model + provider
+    if(c.model && document.getElementById('msel').querySelector(`option[value="${c.model}"]`)){
+      document.getElementById('msel').value=c.model;
+      onModelChange();
+    }
+  }
+  renderCL(); renderMsgs(); closeSB();
+  setTimeout(()=>scrollBot(false),50);
+};
+
+window.delConv=function(id,e){
+  e.stopPropagation();
+  convs=convs.filter(c=>c.id!==id); saveConvs();
+  if(activeId===id){activeId=convs[0]?.id||null; renderMsgs();}
+  renderCL();
+};
+
+window.clearAll=function(){
+  if(!confirm('Effacer tout ?')) return;
+  convs=[]; activeId=null; saveConvs(); renderCL(); renderMsgs();
+};
+
+// ═══════════════════════════════
+// RENDER
+// ═══════════════════════════════
+let filterPV='all';
+window.filterProv=function(p){
+  filterPV=p;
+  ['all','gemini','openrouter'].forEach(x=>{
+    const b=document.getElementById('fp-'+x);
+    b.className=b.className.replace('on','').replace('off','').trim()+' '+(x===p?'on':'off');
+  });
+  renderCL();
+};
+
+function renderCL(){
+  const el=document.getElementById('cl');
+  const filtered=filterPV==='all'?convs:convs.filter(c=>(c.provider||'gemini')===filterPV);
+  if(!filtered.length){
+    el.innerHTML=`<p style="text-align:center;font-size:.65rem;font-family:'JetBrains Mono',monospace;color:#1e1e38;padding:20px">Aucune conversation</p>`;
+    return;
+  }
+  el.innerHTML=filtered.map(c=>`
+    <div class="ci${c.id===activeId?' act':''}" onclick="loadConv('${c.id}')">
+      <svg style="flex-shrink:0;color:#252545" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.72rem">${esc(c.title)}</span>
+      ${c.provider==='openrouter'?`<span class="prov-or" style="flex-shrink:0">OR</span>`:''}
+      <div class="dx">
+        <button onclick="delConv('${c.id}',event)">
+          <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
         </button>
       </div>
-      <div class="msg-ai px-4 py-3 text-sm text-[#b8b8d8]">${parseMarkdown(m.content)}</div>
-    </div>`;
-  }
+    </div>`).join('');
+}
 
-  function parseMarkdown(text) {
-    try { return marked.parse(text || '', { breaks: true, gfm: true }); }
-    catch { return escHtml(text || ''); }
-  }
-
-  function postProcessMessages(container) {
-    container.querySelectorAll('pre code').forEach(codeEl => {
-      const pre = codeEl.parentElement;
-      if (pre.parentElement?.classList.contains('code-wrap')) return;
-      const lang = [...codeEl.classList].find(c => c.startsWith('language-'))?.replace('language-', '') || 'code';
-      const wrap = document.createElement('div'); wrap.className = 'code-wrap';
-      const header = document.createElement('div'); header.className = 'code-header';
-      header.innerHTML = `<span class="code-lang-badge">${escHtml(lang)}</span><button class="copy-code-btn" onclick="copyCodeBlock(this)">Copier</button>`;
-      pre.parentNode.insertBefore(wrap, pre); wrap.appendChild(header); wrap.appendChild(pre);
-      if (lang !== 'code' && Prism.languages[lang]) { try { codeEl.innerHTML = Prism.highlight(codeEl.textContent, Prism.languages[lang], lang); } catch {} }
-    });
-    try { renderMathInElement(container, { delimiters: [{ left:'$$',right:'$$',display:true },{ left:'$',right:'$',display:false }], throwOnError: false }); } catch {}
-  }
-
-  window.copyCodeBlock = function(btn) {
-    const code = btn.closest('.code-wrap').querySelector('code')?.textContent || '';
-    navigator.clipboard.writeText(code).then(() => { btn.textContent = '✓ Copié'; setTimeout(() => btn.textContent = 'Copier', 2000); });
-  };
-  window.copyMsg = function(i) {
-    const conv = convs.find(c => c.id === activeId);
-    if (!conv) return;
-    navigator.clipboard.writeText(conv.messages[i]?.content || '').then(() => toast('Message copié', 'success'));
-  };
-
-  // ── SEND & STREAM ──
-  window.sendMessage = async function() {
-    if (isStreaming) return;
-    const inp = document.getElementById('userInput');
-    const text = inp.value.trim();
-    if (!text) return;
-
-    if (!activeId) newChat();
-    const conv = convs.find(c => c.id === activeId);
-    if (!conv) return;
-
-    inp.value = ''; autoResize(inp);
-
-    conv.messages.push({ role: 'user', content: text });
-    const isFirst = conv.messages.length === 1;
-    if (isFirst) conv.title = text.slice(0, 45) + (text.length > 45 ? '…' : '');
-    saveState(); renderConvList();
-
-    const modelId = document.getElementById('modelSelect').value;
-    const aiMsg = { role: 'model', content: '', model: modelId };
-    conv.messages.push(aiMsg);
-    saveState();
-
-    renderMessages();
-    addStreamingPlaceholder(aiMsg);
-
-    isStreaming = true;
-    abortCtrl = new AbortController();
-    document.getElementById('sendBtn').disabled = true;
-    document.getElementById('stopBar').classList.remove('hidden');
-    setTimeout(fixViewport, 50);
-
-    const streamEl = document.getElementById('stream-content');
-    try {
-      await callGeminiStream(
-        conv.messages.slice(0, -1),
-        conv.systemPrompt || '',
-        (token) => {
-          aiMsg.content += token;
-          if (streamEl) {
-            streamEl.innerHTML = parseMarkdown(aiMsg.content);
-            streamEl.className = 'typing-cursor';
-          }
-          scrollToBottom(false);
-        },
-        abortCtrl.signal
-      );
-    } catch (e) {
-      if (e.name !== 'AbortError') aiMsg.content = `**Erreur :** ${e.message}`;
-    }
-
-    isStreaming = false;
-    document.getElementById('sendBtn').disabled = false;
-    document.getElementById('stopBar').classList.add('hidden');
-    abortCtrl = null;
-    saveState();
-    renderMessages();
-    setTimeout(fixViewport, 50);
-    if (isFirst) setTimeout(() => autoRename(activeId), 1000);
-  };
-
-  function addStreamingPlaceholder(aiMsg) {
-    const container = document.getElementById('messages');
-    const empty = container.querySelector('[class*="py-20"]');
-    if (empty) container.innerHTML = '';
-    const modelCfg = MODELS[aiMsg.model] || {};
-    const div = document.createElement('div');
-    div.id = 'streaming-wrapper';
-    div.className = 'slide-up';
-    div.innerHTML = `
-      <div class="flex items-center gap-2 mb-1.5">
-        <span class="tag bg-[#111120] border border-[#1e1e38] text-[#5566cc]">
-          <div class="dot-live" style="width:5px;height:5px"></div>
-          ${escHtml(modelCfg.label || aiMsg.model)}
-        </span>
-      </div>
-      <div class="msg-ai px-4 py-3 text-sm text-[#b8b8d8]">
-        <span id="stream-content" class="typing-cursor"></span>
+function renderMsgs(){
+  const conv=getConv();
+  const el=document.getElementById('msgs');
+  document.getElementById('htitle').textContent=conv?.title||'Nouveau chat';
+  if(!conv||!conv.messages.length){
+    el.innerHTML=`
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;text-align:center" class="su">
+        <div style="width:54px;height:54px;border-radius:14px;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;margin-bottom:14px;box-shadow:0 8px 28px rgba(99,102,241,.3)">
+          <svg width="24" height="24" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        </div>
+        <div style="font-size:18px;font-weight:800;color:#fff;margin-bottom:6px">NEXUS PRO</div>
+        <div style="font-size:12px;color:#333355;line-height:1.7;max-width:260px">Gemini API + OpenRouter<br>${keyCache.length?keyCache.length+' clé(s) active(s)':'<button onclick="openModal()" style="color:#a5b4fc;background:none;border:none;cursor:pointer;font-size:inherit;text-decoration:underline">Configure ta clé API →</button>'}</div>
       </div>`;
-    container.appendChild(div);
-    scrollToBottom(true);
+    return;
   }
+  el.innerHTML=conv.messages.map((m,i)=>buildMsg(m,i)).join('');
+  postProcess(el);
+  scrollBot(false);
+  setTimeout(fixVP,50);
+}
 
-  window.stopStreaming = function() { if (abortCtrl) abortCtrl.abort(); };
+function buildMsg(m,i){
+  if(m.role==='user') return `<div class="su mu">${esc(m.content)}</div>`;
+  const isOR=(m.provider==='openrouter')||OR_MODELS[m.model];
+  return `<div class="su">
+    <div style="display:flex;align-items:center;gap:7px;margin-bottom:6px">
+      <span class="badge">
+        <div class="dot ${isOR?'':'dot-i'}" style="width:5px;height:5px;${isOR?'background:#fb923c;animation:dp 2s ease infinite':''}"></div>
+        ${esc(isOR?'OpenRouter':'Gemini')} · ${esc(m.modelLabel||m.model||'AI')}
+      </span>
+      <button onclick="cpMsg(${i})" style="margin-left:auto;font-size:.6rem;font-family:'JetBrains Mono',monospace;color:#252545;background:none;border:none;cursor:pointer;padding:2px 6px;border-radius:5px;transition:color .12s" onmouseover="this.style.color='#6366f1'" onmouseout="this.style.color='#252545'">
+        <svg style="display:inline;width:9px;height:9px;margin-right:3px" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copier
+      </button>
+    </div>
+    <div class="ma">${md(m.content)}</div>
+  </div>`;
+}
 
-  // ── SCROLL ──
-  const messagesArea = document.getElementById('messagesArea');
-  window.scrollToBottom = function(smooth = true) {
-    messagesArea.scrollTo({ top: messagesArea.scrollHeight, behavior: smooth ? 'smooth' : 'instant' });
-  };
-  messagesArea.addEventListener('scroll', () => {
-    const btn = document.getElementById('scrollBtn');
-    const diff = messagesArea.scrollHeight - messagesArea.scrollTop - messagesArea.clientHeight;
-    btn.classList.toggle('hidden', diff < 180);
+function postProcess(el){
+  el.querySelectorAll('pre code').forEach(code=>{
+    const pre=code.parentElement;
+    if(pre.parentElement?.classList.contains('cw')) return;
+    const lang=[...code.classList].find(c=>c.startsWith('language-'))?.replace('language-','')||'code';
+    const wrap=document.createElement('div'); wrap.className='cw';
+    const head=document.createElement('div'); head.className='ch';
+    head.innerHTML=`<span class="cl">${esc(lang)}</span><button class="cb" onclick="cpCode(this)">Copier</button>`;
+    pre.parentNode.insertBefore(wrap,pre); wrap.appendChild(head); wrap.appendChild(pre);
+    if(Prism.languages[lang]) try{code.innerHTML=Prism.highlight(code.textContent,Prism.languages[lang],lang)}catch{}
   });
+}
 
-  // ── SETTINGS UI ──
-  window.openSettings = function() { renderKeys(); updateKeyIndicator(); document.getElementById('settingsModal').classList.add('open'); };
-  window.closeSettings = function() { document.getElementById('settingsModal').classList.remove('open'); };
-  document.getElementById('settingsModal').addEventListener('click', function(e) { if (e.target === this) closeSettings(); });
-  window.switchSettingsTab = function(tab) {
-    ['keys','params','system'].forEach(t => {
-      document.getElementById(`panel-${t}`).classList.toggle('hidden', t !== tab);
-      const btn = document.getElementById(`tab-${t}`);
-      btn.className = btn.className.replace('active-tab','').replace('inactive-tab','').trim() + ' ' + (t===tab?'active-tab':'inactive-tab');
-    });
-  };
-  window.setSafety = function(mode) {
-    safetyMode = mode;
-    document.querySelectorAll('.safety-chip').forEach(el => {
-      el.className = el.className.replace('active','inactive');
-      if (el.id === 'safety-' + mode) el.className = el.className.replace('inactive','active');
-    });
-  };
-  window.saveSettings = function() {
-    const model = document.getElementById('defaultModel').value;
-    document.getElementById('modelSelect').value = model;
-    localStorage.setItem('nx_settings', JSON.stringify({
-      model, safetyMode,
-      temperature: document.getElementById('tempSlider').value,
-      topP: document.getElementById('topPSlider').value,
-      maxTokens: document.getElementById('tokensSlider').value,
-      systemPrompt: document.getElementById('globalSystemPrompt').value,
-    }));
-    closeSettings();
-    toast('Paramètres sauvegardés', 'success');
-  };
+window.cpCode=function(btn){
+  const c=btn.closest('.cw')?.querySelector('code')?.textContent||'';
+  navigator.clipboard.writeText(c).then(()=>{btn.textContent='✓ Copié';setTimeout(()=>btn.textContent='Copier',2000)});
+};
+window.cpMsg=function(i){
+  const conv=getConv(); if(!conv) return;
+  navigator.clipboard.writeText(conv.messages[i]?.content||'').then(()=>toast('Copié','s'));
+};
 
-  function loadSettings() {
-    try {
-      const s = JSON.parse(localStorage.getItem('nx_settings') || '{}');
-      if (s.model && MODELS[s.model]) { document.getElementById('modelSelect').value = s.model; document.getElementById('defaultModel').value = s.model; }
-      if (s.temperature) { document.getElementById('tempSlider').value = s.temperature; document.getElementById('tempDisplay').textContent = parseFloat(s.temperature).toFixed(2); }
-      if (s.topP) { document.getElementById('topPSlider').value = s.topP; document.getElementById('topPDisplay').textContent = parseFloat(s.topP).toFixed(2); }
-      if (s.maxTokens) { document.getElementById('tokensSlider').value = s.maxTokens; document.getElementById('tokensDisplay').textContent = s.maxTokens; }
-      if (s.systemPrompt) document.getElementById('globalSystemPrompt').value = s.systemPrompt;
-      if (s.safetyMode) { safetyMode = s.safetyMode; setSafety(s.safetyMode); }
-    } catch {}
-  }
-
-  // ── SIDEBAR ──
-  window.toggleSidebar = function() {
-    document.getElementById('sidebar').classList.toggle('open');
-    document.getElementById('overlay').classList.toggle('active');
-  };
-  window.closeSidebar = function() {
-    document.getElementById('sidebar').classList.remove('open');
-    document.getElementById('overlay').classList.remove('active');
-  };
-
-  // ── INPUT UTILS ──
-  window.autoResize = function(el) {
-    el.style.height = 'auto';
-    el.style.height = Math.min(el.scrollHeight, 144) + 'px';
-    setTimeout(fixViewport, 10);
-  };
-  window.handleKey = function(e) {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-  };
-
-  document.addEventListener('keydown', e => {
-    if ((e.metaKey||e.ctrlKey) && e.key === 'n') { e.preventDefault(); newChat(); }
-    if ((e.metaKey||e.ctrlKey) && e.key === 'k') { e.preventDefault(); document.getElementById('userInput').focus(); }
-    if (e.key === 'Escape') { closeSettings(); closeSidebar(); }
-  });
-
-  // ── TOAST ──
-  window.toast = function(msg, type = 'info') {
-    const el = document.createElement('div');
-    el.className = `toast ${type}`;
-    el.textContent = msg;
-    document.getElementById('toastContainer').appendChild(el);
-    setTimeout(() => { el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(() => el.remove(), 300); }, 2500);
-  };
-
-  // ── UTILS ──
-  function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-
-  // ── MARKED CONFIG ──
-  const renderer = new marked.Renderer();
-  renderer.code = (code, lang) => {
-    const l = lang || 'plaintext';
-    const safe = code.replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    return `<div class="code-wrap"><div class="code-header"><span class="code-lang-badge">${escHtml(l)}</span><button class="copy-code-btn" onclick="copyCodeBlock(this)">Copier</button></div><pre class="language-${escHtml(l)}"><code class="language-${escHtml(l)}">${safe}</code></pre></div>`;
+// ═══════════════════════════════
+// MARKED
+// ═══════════════════════════════
+const ren=new marked.Renderer();
+ren.code=function(code,lang){
+  const l=lang||'plaintext';
+  const safe=(code||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return `<div class="cw"><div class="ch"><span class="cl">${esc(l)}</span><button class="cb" onclick="cpCode(this)">Copier</button></div><pre class="language-${esc(l)}"><code class="language-${esc(l)}">${safe}</code></pre></div>`;
 
 };
-marked.setOptions({ renderer, breaks: true, gfm: true });
+marked.setOptions({renderer:ren,breaks:true,gfm:true});
+function md(t){try{return marked.parse(t||’’,{breaks:true,gfm:true})}catch{return esc(t||’’)}}
 
-// ── INIT ──
-async function init() {
-loadState();
+// ═══════════════════════════════
+// SEND
+// ═══════════════════════════════
+window.send=async function(){
+if(streaming) return;
+const inp=document.getElementById(‘inp’);
+const text=inp.value.trim(); if(!text) return;
+if(!activeId) newChat();
+const conv=getConv(); if(!conv) return;
+inp.value=’’; resize(inp);
+
+conv.messages.push({role:‘user’,content:text});
+const first=conv.messages.length===1;
+if(first) conv.title=text.slice(0,45)+(text.length>45?’…’:’’);
+conv.provider=curProvider;
+conv.model=document.getElementById(‘msel’).value;
+saveConvs(); renderCL();
+
+const modelId=document.getElementById(‘msel’).value;
+const isOR=!!OR_MODELS[modelId];
+const modelLabel=isOR?OR_MODELS[modelId]:GEMINI_MODELS[modelId]||modelId;
+const aiMsg={role:‘model’,content:’’,model:modelId,modelLabel,provider:isOR?‘openrouter’:‘gemini’};
+conv.messages.push(aiMsg); saveConvs();
+
+renderMsgs();
+addStreamEl(aiMsg);
+
+streaming=true; abort=new AbortController();
+document.getElementById(‘send’).disabled=true;
+document.getElementById(‘stopbar’).style.display=‘flex’;
+setTimeout(fixVP,50);
+
+const streamEl=document.getElementById(‘stream-c’);
+try{
+const fn=isOR?streamOR:streamGemini;
+await fn(conv.messages.slice(0,-1), conv.sys||’’, tok=>{
+aiMsg.content+=tok;
+if(streamEl){streamEl.innerHTML=md(aiMsg.content); streamEl.className=‘cur’;}
+scrollBot(false);
+}, abort.signal);
+}catch(e){
+if(e.name!==‘AbortError’) aiMsg.content=`**Erreur:** ${e.message}`;
+}
+
+streaming=false;
+document.getElementById(‘send’).disabled=false;
+document.getElementById(‘stopbar’).style.display=‘none’;
+abort=null; saveConvs(); renderMsgs();
+setTimeout(fixVP,50);
+if(first) setTimeout(()=>autoRename(activeId),1200);
+};
+
+function addStreamEl(aiMsg){
+const el=document.getElementById(‘msgs’);
+// Remove empty state
+const empty=el.querySelector(’[class*=“su”]’);
+if(empty&&!el.querySelector(’.mu’)&&!el.querySelector(’.ma’)) el.innerHTML=’’;
+const isOR=aiMsg.provider===‘openrouter’;
+const div=document.createElement(‘div’); div.id=‘stream-wrap’; div.className=‘su’;
+div.innerHTML=` <div style="display:flex;align-items:center;gap:7px;margin-bottom:6px"> <span class="badge"> <div class="dot" style="width:5px;height:5px;background:${isOR?'#fb923c':'#6366f1'};animation:dp 2s ease infinite"></div> ${isOR?'OpenRouter':'Gemini'} · ${esc(aiMsg.modelLabel||'AI')} </span> </div> <div class="ma"><span id="stream-c" class="cur"></span></div>`;
+el.appendChild(div);
+scrollBot(true);
+}
+
+window.stopStream=function(){if(abort) abort.abort()};
+
+// Auto-rename
+async function autoRename(id){
+const conv=convs.find(c=>c.id===id); if(!conv) return;
+const first=conv.messages.find(m=>m.role===‘user’)?.content?.slice(0,300); if(!first) return;
+try{
+const key=await getBestKey(conv.provider||‘gemini’).catch(()=>null); if(!key) return;
+let title=’’;
+if(conv.provider===‘openrouter’){
+const r=await fetch(‘https://openrouter.ai/api/v1/chat/completions’,{
+method:‘POST’,
+headers:{‘Content-Type’:‘application/json’,‘Authorization’:‘Bearer ‘+key,‘HTTP-Referer’:‘https://nexus-pro.app’,‘X-Title’:‘NEXUS PRO’},
+body:JSON.stringify({model:‘meta-llama/llama-3.3-70b-instruct:free’,messages:[{role:‘user’,content:`Génère un titre ULTRA court (3 mots max, sans guillemets, sans ponctuation) pour: "${first}"`}],max_tokens:15})
+});
+const j=await r.json(); title=j.choices?.[0]?.message?.content?.trim()||’’;
+} else {
+const r=await fetch(‘https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent’,{
+method:‘POST’,
+headers:{‘Content-Type’:‘application/json’,‘x-goog-api-key’:key},
+body:JSON.stringify({contents:[{role:‘user’,parts:[{text:`Génère un titre ULTRA court (3 mots max, sans guillemets) pour: "${first}"`}]}],generationConfig:{maxOutputTokens:15,temperature:0.3}})
+});
+const j=await r.json(); title=j.candidates?.[0]?.content?.parts?.[0]?.text?.trim()||’’;
+}
+if(title&&title.length>2){
+conv.title=title.slice(0,50); saveConvs(); renderCL();
+if(activeId===id) document.getElementById(‘htitle’).textContent=conv.title;
+}
+}catch{}
+}
+
+// ═══════════════════════════════
+// SCROLL
+// ═══════════════════════════════
+const mw=document.getElementById(‘msgs-wrap’);
+window.scrollBot=function(smooth=true){
+mw.scrollTo({top:mw.scrollHeight,behavior:smooth?‘smooth’:‘instant’});
+};
+mw.addEventListener(‘scroll’,()=>{
+const diff=mw.scrollHeight-mw.scrollTop-mw.clientHeight;
+const btn=document.getElementById(‘scrollbtn’);
+btn.style.display=diff>160?‘flex’:‘none’;
+});
+
+// ═══════════════════════════════
+// SETTINGS UI
+// ═══════════════════════════════
+window.openModal=function(){
+renderKeys(); updateKI();
+document.getElementById(‘modal’).classList.add(‘open’);
+};
+window.closeModal=function(){document.getElementById(‘modal’).classList.remove(‘open’)};
+document.getElementById(‘modal’).addEventListener(‘click’,function(e){if(e.target===this)closeModal()});
+
+window.setTab=function(t){
+[‘keys’,‘gen’,‘sys’].forEach(x=>{
+document.getElementById(‘p-’+x).style.display=x===t?(x===‘gen’?‘flex’:‘block’):‘none’;
+const b=document.getElementById(‘t-’+x);
+b.className=b.className.replace(‘on’,’’).replace(‘off’,’’).trim()+’ ’+(x===t?‘on’:‘off’);
+});
+};
+
+window.setProvider=function(p){
+modalProvider=p;
+const bg=document.getElementById(‘pb-gemini’), bor=document.getElementById(‘pb-openrouter’);
+if(p===‘gemini’){
+bg.style.cssText=‘flex:1;padding:8px;border-radius:9px;font-size:.72rem;font-weight:700;border:1px solid rgba(99,102,241,.4);background:rgba(99,102,241,.1);color:#a5b4fc;cursor:pointer;transition:all .15s’;
+bor.style.cssText=‘flex:1;padding:8px;border-radius:9px;font-size:.72rem;font-weight:700;border:1px solid #1e1e38;background:transparent;color:#555580;cursor:pointer;transition:all .15s’;
+} else {
+bor.style.cssText=‘flex:1;padding:8px;border-radius:9px;font-size:.72rem;font-weight:700;border:1px solid rgba(251,146,60,.4);background:rgba(251,146,60,.1);color:#fb923c;cursor:pointer;transition:all .15s’;
+bg.style.cssText=‘flex:1;padding:8px;border-radius:9px;font-size:.72rem;font-weight:700;border:1px solid #1e1e38;background:transparent;color:#555580;cursor:pointer;transition:all .15s’;
+}
+renderKeys();
+};
+
+window.saveSettings=function(){
+const prefs={
+modelG:document.getElementById(‘def-model-g’).value,
+modelOR:document.getElementById(‘def-model-or’).value,
+temp:document.getElementById(‘ts’).value,
+topP:document.getElementById(‘ps’).value,
+maxTok:document.getElementById(‘tks’).value,
+sys:document.getElementById(‘sysp’).value,
+};
+localStorage.setItem(‘nx_prefs’,JSON.stringify(prefs));
+closeModal(); toast(‘Paramètres sauvegardés’,‘s’);
+};
+
+function loadSettings(){
+try{
+const p=JSON.parse(localStorage.getItem(‘nx_prefs’)||’{}’);
+if(p.modelG) document.getElementById(‘def-model-g’).value=p.modelG;
+if(p.modelOR) document.getElementById(‘def-model-or’).value=p.modelOR;
+if(p.temp){document.getElementById(‘ts’).value=p.temp;document.getElementById(‘tv’).textContent=parseFloat(p.temp).toFixed(2)}
+if(p.topP){document.getElementById(‘ps’).value=p.topP;document.getElementById(‘pv’).textContent=parseFloat(p.topP).toFixed(2)}
+if(p.maxTok){document.getElementById(‘tks’).value=p.maxTok;document.getElementById(‘tkv’).textContent=p.maxTok}
+if(p.sys) document.getElementById(‘sysp’).value=p.sys;
+}catch{}
+}
+
+// ═══════════════════════════════
+// SIDEBAR
+// ═══════════════════════════════
+window.toggleSB=function(){
+document.getElementById(‘sb’).classList.toggle(‘open’);
+document.getElementById(‘ovl’).classList.toggle(‘active’);
+};
+window.closeSB=function(){
+document.getElementById(‘sb’).classList.remove(‘open’);
+document.getElementById(‘ovl’).classList.remove(‘active’);
+};
+
+// ═══════════════════════════════
+// INPUT
+// ═══════════════════════════════
+window.resize=function(el){
+el.style.height=‘auto’;
+el.style.height=Math.min(el.scrollHeight,130)+‘px’;
+setTimeout(fixVP,5);
+};
+window.onKey=function(e){if(e.key===‘Enter’&&!e.shiftKey){e.preventDefault();send()}};
+
+// Mobile check
+if(window.innerWidth<=768) document.getElementById(‘menu-btn’).style.display=‘flex’;
+window.addEventListener(‘resize’,()=>{
+document.getElementById(‘menu-btn’).style.display=window.innerWidth<=768?‘flex’:‘none’;
+});
+
+// Keyboard shortcuts
+document.addEventListener(‘keydown’,e=>{
+if((e.metaKey||e.ctrlKey)&&e.key===‘n’){e.preventDefault();newChat()}
+if(e.key===‘Escape’){closeModal();closeSB()}
+});
+
+// ═══════════════════════════════
+// TOAST
+// ═══════════════════════════════
+window.toast=function(msg,type=‘i’){
+const el=document.createElement(‘div’);
+el.className=`t ${type}`;el.textContent=msg;
+document.getElementById(‘toasts’).appendChild(el);
+setTimeout(()=>{el.style.transition=‘opacity .25s’;el.style.opacity=‘0’;setTimeout(()=>el.remove(),250)},2400);
+};
+
+// ═══════════════════════════════
+// UTILS
+// ═══════════════════════════════
+function esc(s){return String(s||’’).replace(/&/g,’&’).replace(/</g,’<’).replace(/>/g,’>’).replace(/”/g,’"’)}
+
+// ═══════════════════════════════
+// INIT
+// ═══════════════════════════════
+async function init(){
+loadConvs();
 loadSettings();
-await decryptAllKeys();
-updateKeyIndicator();
-renderConvList();
-if (convs.length > 0) { activeId = convs[0].id; }
-renderMessages();
-if (keyCache.length === 0) setTimeout(openSettings, 600);
-// Fix viewport après tout le rendu
-requestAnimationFrame(() => { fixViewport(); setTimeout(fixViewport, 200); });
+buildModelSelect();
+await loadKeys();
+updateKI();
+renderCL();
+if(convs.length){activeId=convs[0].id;}
+renderMsgs();
+if(!keyCache.length) setTimeout(openModal,500);
+requestAnimationFrame(()=>{fixVP();setTimeout(fixVP,200)});
 }
 init();
 })();
